@@ -66,9 +66,15 @@ int main(void)
 	ft_draw_square(d->square_b, 100, 100, 1);
 	d->square_w = mlx_new_image(d->mlx, 100, 100);
 	ft_draw_square(d->square_w, 100, 100, 2);
-
-	d->player = mlx_new_image(d->mlx, 30, 20);
 	ft_draw_map(d);
+
+	d->player = mlx_new_image(d->mlx, 25, 25);
+	ft_draw_square(d->player, 25, 25, 3);
+	mlx_image_to_window(d->mlx, d->player, 200, 200);
+
+	d->line = mlx_new_image(d->mlx, 75, 75);
+	ft_draw_line(d->line, 38, 38, 75, 38);
+	mlx_image_to_window(d->mlx, d->line, 175, 175);
 
 	//TEST STRING
 	mlx_image_t *text = mlx_put_string(d->mlx, "test text", 0, 0); //para testear como poner strings en pantalla

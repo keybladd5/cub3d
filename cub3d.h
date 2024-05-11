@@ -33,10 +33,11 @@ typedef struct s_data_player
 typedef struct s_data
 {
 	mlx_t* mlx;
-	mlx_image_t  *square_b;
-	mlx_image_t  *square_w;
-	mlx_image_t	 *player;
-	t_data_player *data_player;
+	mlx_image_t		*square_b;
+	mlx_image_t		*square_w;
+	mlx_image_t		*player;
+	mlx_image_t		*line;
+	t_data_player	*data_player;
 
 }	t_data;
 
@@ -45,5 +46,7 @@ int get_rgba(int r, int g, int b, int a);
 void ft_draw_player(void *data);
 
 void ft_draw_square(mlx_image_t *image, int x_limit, int y_limit, int color);
+
+void ft_draw_line(mlx_image_t* image, int x0, int y0, int x1, int y1);
 
 void ft_draw_map(void *data);

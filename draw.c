@@ -13,10 +13,11 @@
 #include "cub3d.h"
 
 // Función para dibujar una línea entre dos puntos en una imagen
-void ft_draw_line(mlx_image_t* image, int x0, int y0, int x1, int y1, int color) 
+void ft_draw_line(mlx_image_t* image, int x0, int y0, int x1, int y1) 
 {
-    int dx = abs(x1 - x0);
-    int dy = abs(y1 - y0);
+    int dx = (int)fabs((double)(x1 - x0));
+    int dy = (int)fabs((double)(y1 - y0));
+	printf("dx = %d, dy = %d\n", dx, dy);
     int sx, sy;
 
     if (x0 < x1)
@@ -72,13 +73,28 @@ void ft_draw_player(void *data)
 		*(d->data_player)->angle_rotation -= (2 * M_PI);
 	if (*(d->data_player)->angle_rotation < 0.0) //para que no pase a radianes negativos y conectar ambos limites
 		*(d->data_player)->angle_rotation += (2 * M_PI);
-	//ft_draw_line()
+	
 	//checkeo de colisiones
-	if (map[(int)round(new_y) / 100][(int)round(new_x) / 100] == '0')//para imlementar la colision con los limites des de el primer punto dibujado del player
+	if (map[(int)round(new_y + 12.0) / 100][(int)round(new_x + 12.0) / 100] == '0')//para imlementar la colision con los limites des de el primer punto dibujado del player
 	{
 		d->player->instances[0].x = round(new_x);//round =  funcion para redondear el dato double a integer
 		d->player->instances[0].y = round(new_y);
 	}
+
+	//redibujar linea en la direccion del player si hay rotacion
+	if (*(d->data_player)->turn_on != 0)
+	{
+		mlx_delete_image(d->mlx, d->line);
+		d->line = mlx_new_image(d->mlx, 75, 75);
+		ft_draw_line(d->line, 38, 38, 38 + (37 * cos(*(d->data_player)->angle_rotation)), 38 + (37 * sin(*(d->data_player)->angle_rotation)));
+		mlx_image_to_window(d->mlx, d->line, round(new_x - 25), round(new_y - 25));
+	}
+	else
+	{
+		d->line->instances[0].x = round(new_x - 25);
+		d->line->instances[0].y = round(new_y - 25);
+	}
+
 	printf("x = %d y = %d  degrees = %f\n", d->player->instances[0].x,  d->player->instances[0].y, *(d->data_player)->angle_rotation *  (180/M_PI));//print de informacion de la posicion en pixels del cuadrado
 	printf("speed = %d\n", *(d->data_player->advance));
 }
@@ -147,7 +163,4 @@ void ft_draw_map(void *data)
 		//printf("\n");
 		y++;
 	}
-	//ft_draw_player(d->mlx, d->player, 200, 200);
-	ft_draw_square(d->player, 20, 20, 3);
-	mlx_image_to_window(d->mlx, d->player, 200, 200);
 }
