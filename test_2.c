@@ -47,6 +47,7 @@ int get_rgba(int r, int g, int b, int a)
 }
 
 
+//esta funcion modifica la instancia de la imagen, con los datos del player a traves de los calculos trigonometricos 
 void ft_draw_player(void *data)
 {
 	t_data *d = data;
@@ -61,24 +62,32 @@ void ft_draw_player(void *data)
     {'1', '1', '1', '1', '1', '1', '1', '1', '\0'},
     };
 
+	//prevision de calculo de a donde se va a desplazar el player
 	new_x =  (double)d->player->instances[0].x + (d->data_player->advance[0] * cos(d->data_player->angle_rotation[0]) * d->data_player->speed_advance[0]); 
 	new_y =  (double)d->player->instances[0].y + (d->data_player->advance[0] * sin(d->data_player->angle_rotation[0]) * d->data_player->speed_advance[0]);
-	//printf("cos = %f\n", cos(d->data_player->angle_rotation[0]));
-	//printf("lo que se suma al x = %f\n", (cos(d->data_player->angle_rotation[0]) * d->data_player->speed_advance[0]));
-	printf("new_x = %f new_y = %f angle = %f \n", new_x, new_y, *(d->data_player)->angle_rotation);
+	printf("new_x = %f new_y = %f radians = %f \n", new_x, new_y, *(d->data_player)->angle_rotation);//print de informacion x terminal
 
+	//asignacion de la direccion del player, en radianes
 	*(d->data_player)->angle_rotation += (*(d->data_player)->turn_on * *(d->data_player)->speed_turn_on);
-	if (map[(int)round(new_y) / 100][(int)round(new_x) / 100] == '0')
+	if (*(d->data_player)->angle_rotation >= (2 * M_PI)) //para que no pase los radians del maximo en grados 
+		*(d->data_player)->angle_rotation = 0.0;
+	if (*(d->data_player)->angle_rotation < 0.0) //para que no pase a radianes negativos y conectar ambos limites
+		*(d->data_player)->angle_rotation = (2 * M_PI);
+	
+	//checkeo de colisiones
+	if (map[(int)round(new_y) / 100][(int)round(new_x) / 100] == '0')//para imlementar la colision con los limites des de el primer punto dibujado del player
 	{
-		d->player->instances[0].x = round(new_x);
+		d->player->instances[0].x = round(new_x);//round =  funcion para redondear el dato double a integer
 		d->player->instances[0].y = round(new_y);
 	}
-	printf("x = %d y = %d \n", d->player->instances[0].x,  d->player->instances[0].y);
+	printf("x = %d y = %d \n", d->player->instances[0].x,  d->player->instances[0].y);//print de informacion de la posicion en pixels del cuadrado
 }
+
 void ft_hook(void* param)
 {
 	t_data *d = param;
 
+	//implementacion de los hooks con datos como 1 o -1, para multiplicar por la velocidad de steps o speed_avance / speed_turn_on
 	if (mlx_is_key_down(d->mlx, MLX_KEY_ESCAPE))
 		mlx_close_window(d->mlx);
 	else if (mlx_is_key_down(d->mlx, MLX_KEY_W) == true)
@@ -90,7 +99,7 @@ void ft_hook(void* param)
 	else if (mlx_is_key_down(d->mlx, MLX_KEY_A) == true)
 		*(d->data_player->turn_on) = -1;
 	ft_draw_player(param);
-	//hola ales, esto es setear los valores a 0 cuando ya se han pulsado
+	//hola ales, esto es setear los valores a 0 cuando ya se han pulsado, es mi implementacion del hook_key_release
 	if (*(d->data_player->advance) != 0)
 		*(d->data_player->advance) = 0;
 	else if (*(d->data_player->turn_on) != 0)
@@ -166,6 +175,8 @@ void ft_draw_map(void *data)
 int main(void)
 {
 	t_data	*d;
+	//he añadido una serie de datos relevantes al player, que necesito pasar por referencia y alojar dinamicamente.
+	//por eso hago malloc, con el onjetivo de poder modificarlos des de otras funciones
 	d->data_player = malloc(sizeof(t_data_player));
 	d->data_player->advance =  malloc(sizeof(int));
 	*(d->data_player->advance) =  0;
