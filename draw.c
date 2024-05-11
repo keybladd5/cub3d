@@ -12,6 +12,40 @@
 
 #include "cub3d.h"
 
+// Función para dibujar una línea entre dos puntos en una imagen
+void ft_draw_line(mlx_image_t* image, int x0, int y0, int x1, int y1, int color) 
+{
+    int dx = abs(x1 - x0);
+    int dy = abs(y1 - y0);
+    int sx, sy;
+
+    if (x0 < x1)
+		sx = 1;
+    else
+		sx = -1;
+    if (y0 < y1)
+		sy = 1;
+	else
+		sy = -1;
+
+    int err = dx - dy;
+
+    while (x0 != x1 || y0 != y1) 
+	{
+        mlx_put_pixel(image, x0, y0, get_rgba(255, 255, 255, 255)); // Dibuja el pixel en la posición (x0, y0)
+
+        int e2 = 2 * err;
+        if (e2 > -dy) {
+            err -= dy;
+            x0 += sx;
+        }
+        if (e2 < dx) {
+            err += dx;
+            y0 += sy;
+        }
+    }
+}
+
 //esta funcion modifica la instancia de la imagen, con los datos del player a traves de los calculos trigonometricos 
 void ft_draw_player(void *data)
 {
@@ -38,7 +72,7 @@ void ft_draw_player(void *data)
 		*(d->data_player)->angle_rotation -= (2 * M_PI);
 	if (*(d->data_player)->angle_rotation < 0.0) //para que no pase a radianes negativos y conectar ambos limites
 		*(d->data_player)->angle_rotation += (2 * M_PI);
-	
+	//ft_draw_line()
 	//checkeo de colisiones
 	if (map[(int)round(new_y) / 100][(int)round(new_x) / 100] == '0')//para imlementar la colision con los limites des de el primer punto dibujado del player
 	{
@@ -46,6 +80,7 @@ void ft_draw_player(void *data)
 		d->player->instances[0].y = round(new_y);
 	}
 	printf("x = %d y = %d  degrees = %f\n", d->player->instances[0].x,  d->player->instances[0].y, *(d->data_player)->angle_rotation *  (180/M_PI));//print de informacion de la posicion en pixels del cuadrado
+
 }
 
 
