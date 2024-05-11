@@ -42,8 +42,8 @@ void ft_draw_player(void *data)
 	//checkeo de colisiones
 	if (map[(int)round(new_y) / 100][(int)round(new_x) / 100] == '0')//para imlementar la colision con los limites des de el primer punto dibujado del player
 	{
-		d->player->instances[0].x = new_x;//round =  funcion para redondear el dato double a integer
-		d->player->instances[0].y = new_y;
+		d->player->instances[0].x = round(new_x);//round =  funcion para redondear el dato double a integer
+		d->player->instances[0].y = round(new_y);
 	}
 	printf("x = %d y = %d  degrees = %f\n", d->player->instances[0].x,  d->player->instances[0].y, *(d->data_player)->angle_rotation *  (180/M_PI));//print de informacion de la posicion en pixels del cuadrado
 }
@@ -107,7 +107,7 @@ void ft_draw_map(void *data)
 				mlx_image_to_window(d->mlx, d->square_w, (x * 100), (y *  100));
 			}
 			x++;
-			sleep(900000000);
+			//sleep(100);
 		}
 		//printf("\n");
 		y++;
