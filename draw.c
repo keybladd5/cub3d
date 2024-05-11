@@ -84,11 +84,14 @@ void ft_draw_player(void *data)
 	//redibujar linea en la direccion del player si hay rotacion
 	if (*(d->data_player)->turn_on != 0)
 	{
+		//borra la imagen y crea otra imagen del mismo tamaño
 		mlx_delete_image(d->mlx, d->line);
 		d->line = mlx_new_image(d->mlx, 75, 75);
+		//dibuja la nueva linea segun el nuevo angulo. x0,y0 se mantiene en el centro, x1,y1 = catetos del triangulo rectangulo que tiene como hipotenusa la propia linea con origen en el centro del player y angulo angle_rotation
 		ft_draw_line(d->line, 38, 38, 38 + (37 * cos(*(d->data_player)->angle_rotation)), 38 + (37 * sin(*(d->data_player)->angle_rotation)));
 		mlx_image_to_window(d->mlx, d->line, round(new_x - 25), round(new_y - 25));
 	}
+	//si no hay rotacion, mueve la linea igual que el player
 	else
 	{
 		d->line->instances[0].x = round(new_x - 25);
@@ -149,18 +152,14 @@ void ft_draw_map(void *data)
 		{
 			if (map[y][x] == '1')
 			{
-				//printf("| %p  x = %d y = %d  |", square_b, (x * 100), (y *  100));
 				mlx_image_to_window(d->mlx, d->square_b, (x * 100), (y * 100));
 			}
 			else if (map[y][x] == '0')
 			{
-				//printf("| %p  x = %d y = %d  |", square_w, (x * 100), (y *  100));
 				mlx_image_to_window(d->mlx, d->square_w, (x * 100), (y *  100));
 			}
 			x++;
-			//sleep(100);
 		}
-		//printf("\n");
 		y++;
 	}
 }
