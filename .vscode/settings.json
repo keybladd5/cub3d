@@ -1,9 +1,0 @@
-{
-	"files.associations": {
-		"stdio.h": "c",
-		"mlx42.h": "c",
-		"mlx42_int.h": "c",
-		"math.h": "c",
-		"chrono": "c"
-	}
-}
