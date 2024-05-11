@@ -90,5 +90,12 @@ int main(void)
 	mlx_loop_hook(d->mlx, ft_hook, d);
 	mlx_loop(d->mlx);
 	mlx_terminate(d->mlx);
+	free(d->data_player->advance);
+	free(d->data_player->turn_on);
+	free(d->data_player->speed_advance);
+	free(d->data_player->speed_turn_on);
+	free(d->data_player->angle_rotation);
+	free(d->data_player);
+	free(d);
 	return (EXIT_SUCCESS);
 }
