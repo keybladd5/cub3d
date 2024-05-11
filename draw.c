@@ -80,7 +80,7 @@ void ft_draw_player(void *data)
 		d->player->instances[0].y = round(new_y);
 	}
 	printf("x = %d y = %d  degrees = %f\n", d->player->instances[0].x,  d->player->instances[0].y, *(d->data_player)->angle_rotation *  (180/M_PI));//print de informacion de la posicion en pixels del cuadrado
-
+	printf("speed = %d\n", *(d->data_player->advance));
 }
 
 
