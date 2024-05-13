@@ -63,16 +63,16 @@ void ft_draw_player(void *data)
     };
 
 	//prevision de calculo de a donde se va a desplazar el player
-	new_x =  (double)d->player->instances[0].x + (d->data_player->advance[0] * cos(d->data_player->angle_rotation[0]) * d->data_player->speed_advance[0]); 
-	new_y =  (double)d->player->instances[0].y + (d->data_player->advance[0] * sin(d->data_player->angle_rotation[0]) * d->data_player->speed_advance[0]);
-	printf("new_x = %f new_y = %f radians = %f \n", new_x, new_y, *(d->data_player)->angle_rotation);//print de informacion x terminal
+	new_x =  (double)d->player->instances[0].x + (d->data_player.advance * cos(d->data_player.angle_rotation) * d->data_player.speed_advance); 
+	new_y =  (double)d->player->instances[0].y + (d->data_player.advance * sin(d->data_player.angle_rotation) * d->data_player.speed_advance);
+	printf("new_x = %f new_y = %f radians = %f \n", new_x, new_y, d->data_player.angle_rotation);//print de informacion x terminal
 
 	//asignacion de la direccion del player, en radianes
-	*(d->data_player)->angle_rotation += (*(d->data_player)->turn_on * *(d->data_player)->speed_turn_on);
-	if (*(d->data_player)->angle_rotation >= (2 * M_PI)) //para que no pase los radians del maximo en grados 
-		*(d->data_player)->angle_rotation -= (2 * M_PI);
-	if (*(d->data_player)->angle_rotation < 0.0) //para que no pase a radianes negativos y conectar ambos limites
-		*(d->data_player)->angle_rotation += (2 * M_PI);
+	d->data_player.angle_rotation += (d->data_player.turn_on * d->data_player.speed_turn_on);
+	if (d->data_player.angle_rotation >= (2 * M_PI)) //para que no pase los radians del maximo en grados 
+		d->data_player.angle_rotation -= (2 * M_PI);
+	if (d->data_player.angle_rotation < 0.0) //para que no pase a radianes negativos y conectar ambos limites
+		d->data_player.angle_rotation += (2 * M_PI);
 	
 	//checkeo de colisiones
 	if (map[(int)round(new_y + 12.0) / 100][(int)round(new_x + 12.0) / 100] == '0')//para imlementar la colision con los limites des de el primer punto dibujado del player
@@ -82,13 +82,13 @@ void ft_draw_player(void *data)
 	}
 
 	//redibujar linea en la direccion del player si hay rotacion
-	if (*(d->data_player)->turn_on != 0)
+	if (d->data_player.turn_on != 0)
 	{
 		//borra la imagen y crea otra imagen del mismo tamaño
 		mlx_delete_image(d->mlx, d->line);
 		d->line = mlx_new_image(d->mlx, 75, 75);
 		//dibuja la nueva linea segun el nuevo angulo. x0,y0 se mantiene en el centro, x1,y1 = catetos del triangulo rectangulo que tiene como hipotenusa la propia linea con origen en el centro del player y angulo angle_rotation
-		ft_draw_line(d->line, 38, 38, 38 + (37 * cos(*(d->data_player)->angle_rotation)), 38 + (37 * sin(*(d->data_player)->angle_rotation)));
+		ft_draw_line(d->line, 38, 38, 38 + (37 * cos(d->data_player.angle_rotation)), 38 + (37 * sin(d->data_player.angle_rotation)));
 		mlx_image_to_window(d->mlx, d->line, round(new_x - 25), round(new_y - 25));
 	}
 	//si no hay rotacion, mueve la linea igual que el player
@@ -98,8 +98,8 @@ void ft_draw_player(void *data)
 		d->line->instances[0].y = round(new_y - 25);
 	}
 
-	printf("x = %d y = %d  degrees = %f\n", d->player->instances[0].x,  d->player->instances[0].y, *(d->data_player)->angle_rotation *  (180/M_PI));//print de informacion de la posicion en pixels del cuadrado
-	printf("speed = %d\n", *(d->data_player->advance));
+	printf("x = %d y = %d  degrees = %f\n", d->player->instances[0].x,  d->player->instances[0].y, d->data_player.angle_rotation *  (180/M_PI));//print de informacion de la posicion en pixels del cuadrado
+	printf("speed = %d\n", d->data_player.advance);
 }
 
 

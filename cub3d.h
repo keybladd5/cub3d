@@ -23,11 +23,11 @@
 
 typedef struct s_data_player
 {
-	int *advance;  //0 1 -1
-	int *turn_on; //0 1 -1
-	double *speed_advance; //3
-	double *speed_turn_on;
-	double *angle_rotation;
+	int advance; 
+	int turn_on; 
+	double speed_advance; 
+	double speed_turn_on;
+	double angle_rotation;
 } t_data_player;
 
 typedef struct s_data
@@ -37,7 +37,7 @@ typedef struct s_data
 	mlx_image_t		*square_w;
 	mlx_image_t		*player;
 	mlx_image_t		*line;
-	t_data_player	*data_player;
+	t_data_player	data_player;
 
 }	t_data;
 
