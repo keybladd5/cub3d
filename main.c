@@ -74,12 +74,6 @@ int main(void)
 	ft_draw_line(d.line, 38, 38, 75, 38); //x0,y0 = centro de la imagen (x / 2 + 1, y / 2 + 1). x1 = borde derecho (75), y1 = y0 (linea horizontal)
 	mlx_image_to_window(d.mlx, d.line, 175, 175);
 
-	//TEST STRING
-	mlx_image_t *text = mlx_put_string(d.mlx, "test text", 0, 0); //para testear como poner strings en pantalla
-	mlx_set_instance_depth(text->instances, 50); //para modificar la intensidad con la que se ve la string
-	mlx_image_to_window(d.mlx, text, 0, 0); //string cargada en la pantalla
-
-	
 	//hooks a eventos 
 	mlx_loop_hook(d.mlx, ft_hook, &d);
 	mlx_loop(d.mlx);
