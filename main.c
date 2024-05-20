@@ -35,6 +35,7 @@ void ft_hook(void* param)
 	if (mlx_is_key_down(d->mlx, MLX_KEY_A) == true)
 		d->data_player.turn_on -= 1;
 	ft_draw_player(param);
+	ft_draw_ray(param);
 	//hola ales, esto es setear los valores a 0 cuando ya se han pulsado, es mi implementacion del hook_key_release
 	if (d->data_player.advance != 0)
 		d->data_player.advance = 0;
@@ -53,6 +54,13 @@ int main(void)
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_turn_on = 3.0 * (M_PI / 180.0);
+	
+	//nuevas variables añadidas para los rayos
+	d.data_player.west = false;
+	d.data_player.south = false;
+	d.data_player.x_intercept = 0;
+	d.data_player.y_intercept = 0;
+
 	//carga la ventana
 	d.mlx = mlx_init(WIDTH, HEIGHT, "cub3d", true);
 
@@ -69,10 +77,18 @@ int main(void)
 	ft_draw_square(d.player, 25, 25, 3);
 	mlx_image_to_window(d.mlx, d.player, 200, 200);
 
+	
 	//dibuja la imagen de la linea en direccion 0 radianes y coordenadas para que el centro coincida con el player (coordenadas iniciales - tamaño player)
 	d.line = mlx_new_image(d.mlx, 75, 75);
 	ft_draw_line(d.line, 38, 38, 75, 38); //x0,y0 = centro de la imagen (x / 2 + 1, y / 2 + 1). x1 = borde derecho (75), y1 = y0 (linea horizontal)
 	mlx_image_to_window(d.mlx, d.line, 175, 175);
+	
+	
+	//inicializa la imagen que contendra los rayos y dibuja el primero en el centro del FOV
+	d.rays = mlx_new_image(d.mlx, WIDTH, HEIGHT);
+	ft_draw_ray(&d);
+	mlx_image_to_window(d.mlx, d.rays, 0, 0);
+	
 
 	//hooks a eventos 
 	mlx_loop_hook(d.mlx, ft_hook, &d);
