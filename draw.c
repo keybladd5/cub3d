@@ -21,6 +21,10 @@ char g_map[7][9] = {
     {'1', '1', '1', '1', '1', '1', '1', '1', '\0'},
     };
 
+int distance_between_points(int x0, int y0, int x1, int y1)
+{
+	return ((int)(sqrt(((x1 - x0) * (x1 - x0)) + ((y1-y0) * (y1 - y0)))));
+}
 // Función para dibujar una línea entre dos puntos en una imagen
 void ft_draw_line(mlx_image_t* image, int x0, int y0, int x1, int y1) 
 {
@@ -62,6 +66,7 @@ void ft_draw_ray(void *param)
 {
 	t_data *d = param;
 	int adjacent_side;
+	int oposite_side;
 	int x_step;
 	int y_step;
 
@@ -78,6 +83,8 @@ void ft_draw_ray(void *param)
 
 	//este bloque detecta la primera colision con ambos ejes Y X en el primer cuadrado de la cuadricula, en la direccion de
 	//angle_rotation en radianes
+
+	//CALCULO DEL CATETO ADYACENTE Y LOS X Y QUE VAN A INTERCEPTAR
 	d->data_player.y_intercept = ((d->player->instances[0].y + 12) / TILE_SIZE) * TILE_SIZE;
 	if (d->data_player.south)
 		d->data_player.y_intercept += TILE_SIZE;		
@@ -85,7 +92,7 @@ void ft_draw_ray(void *param)
 	d->data_player.x_intercept = (d->player->instances[0].x + 12) + adjacent_side;
 	printf("x_intercept = %d y_intercept = %d\n", d->data_player.x_intercept, d->data_player.y_intercept);
 
-	
+	//CALCULO DE DISTANCIA DE STEPS
 	y_step = TILE_SIZE;
 	x_step = (int)((double)y_step / tan(d->data_player.angle_rotation));
 	if (!d->data_player.south)
@@ -94,6 +101,7 @@ void ft_draw_ray(void *param)
 		x_step *= -1;
 	
 	//ahora se calcula la distancia e cada paso, con las variables next_y y next_x
+	//PREPARAR TODO PARA EL BUCLE DE COLISION HORIZONTAL
 	int next_x_horizontal = d->data_player.x_intercept;
 	int next_y_horizontal = d->data_player.y_intercept;
 	bool coll_horizontal = false;
@@ -101,10 +109,14 @@ void ft_draw_ray(void *param)
 	int wall_hit_y_horizontal = 0;
 	if (!d->data_player.south)
 		next_y_horizontal--;
+
 	while(!coll_horizontal)
 	{
+		//CALCULO PARA LA COLISION HORIZONTAL
+		if (next_x_horizontal < 0 || next_y_horizontal < 0 || next_x_horizontal > WIDTH || next_y_horizontal > HEIGHT)// para evitar segfaults y abort
+			break ;
 		printf("next_x_horizontal: %d, next_y_horizontal: %d\n", next_x_horizontal, next_y_horizontal);
-		if (g_map[next_y_horizontal / TILE_SIZE][next_x_horizontal / TILE_SIZE] == '1')
+		if (g_map[next_y_horizontal / TILE_SIZE][next_x_horizontal / TILE_SIZE] == '1') //si hay impacto en los ejes x
 		{
 			coll_horizontal = true;
 			wall_hit_x_horizontal = next_x_horizontal;
@@ -115,13 +127,81 @@ void ft_draw_ray(void *param)
 			next_x_horizontal += x_step;
 			next_y_horizontal += y_step;
 		}
-		if (next_x_horizontal < 0 || next_y_horizontal < 0)
-			break ;
 	}
-	printf("x0: %d, y0: %d, x1: %d, y1: %d\n", d->player->instances[0].x + 12, d->player->instances[0].y + 12, wall_hit_x_horizontal, wall_hit_y_horizontal);
+
+	bool coll_vertical = false;
+	int wall_hit_x_vertical = 0;
+	int wall_hit_y_vertical = 0;
+	int next_x_vertical = d->data_player.x_intercept;
+	int next_y_vertical = d->data_player.y_intercept;
+
+	//CALCULO DEL CATETO OPUESTO Y X Y QUE VAN A INTERCEPTAR
+	d->data_player.x_intercept = ((d->player->instances[0].x + 12) / TILE_SIZE) * TILE_SIZE;
+	if (!d->data_player.west)
+		next_x_vertical++;
+	oposite_side = (int)((double)(d->data_player.x_intercept - (d->player->instances[0].x + 12)) * tan(d->data_player.angle_rotation));
+	d->data_player.y_intercept = (d->player->instances[0].y + 12) + oposite_side;
+
+	//CALCULO DE DISTANCIAS DE STEPS
+	x_step = TILE_SIZE;
+	if (d->data_player.west)
+		x_step *= -1;
+	y_step = (int)((double)x_step * tan(d->data_player.angle_rotation));
+	if ((!d->data_player.south && y_step > 0) || (d->data_player.south && y_step < 0))
+		y_step *= -1;
+	
+	if(d->data_player.west)
+		next_x_vertical--;
+	
+	//bucle de checkeo de colision en vertical
+	while(!coll_vertical)
+	{
+		if (next_x_vertical < 0 || next_y_vertical < 0 || next_x_vertical > WIDTH || next_y_vertical > HEIGHT)
+			break;
+		printf("next_x_vertical: %d, next_y_vertical: %d\n", next_x_vertical, next_y_vertical);
+		if (g_map[next_y_vertical / TILE_SIZE][next_x_vertical / TILE_SIZE] == '1') //si hay impacto en los ejes y
+		{
+			coll_vertical = true;
+			wall_hit_x_vertical = next_x_vertical;
+			wall_hit_y_vertical = next_y_vertical;
+		}
+		else
+		{
+			next_x_vertical += x_step;
+			next_y_vertical += y_step;
+		}
+	}
+
+	//ASIGNAR VARIABLES FINALES QUE DELIMITAN EL FINAL DEL RAYO
+	int wall_hit_x;
+	int wall_hit_y;
+	int total_collision_horizontal = INT_MAX;
+	int total_collision_vertical = INT_MAX;
+
+	//PARA OBTENER UN DATO A COMPARA DE DISTANCIA ENTRE PUNTOS DE COLISION EN EJE X
+	if (coll_horizontal)
+		total_collision_horizontal = distance_between_points(d->player->instances[0].x, wall_hit_x_horizontal, d->player->instances[0].y, wall_hit_x_horizontal);
+	
+	//PARA OBTENER UN DATO A COMPARA DE DISTANCIA ENTRE PUNTOS DE COLISION EN EJE Y
+	if (coll_vertical)
+		total_collision_vertical = distance_between_points(d->player->instances[0].x, wall_hit_x_vertical, d->player->instances[0].y, wall_hit_x_vertical);
+	
+	//CONDICIONES DE COMPARACION PARA ASIGNAR LIMITES EN CASO DEL MAS PPEQUEÑO
+	if (total_collision_vertical > total_collision_horizontal)
+	{
+		wall_hit_x = wall_hit_x_horizontal;
+		wall_hit_y = wall_hit_y_horizontal;
+	}
+	else
+	{
+		wall_hit_x = wall_hit_x_vertical;
+		wall_hit_y = wall_hit_y_vertical;
+	}
+	
+	printf("x0: %d, y0: %d, x1: %d, y1: %d\n", d->player->instances[0].x + 12, d->player->instances[0].y + 12, wall_hit_x, wall_hit_y);
 	mlx_delete_image(d->mlx, d->rays);
 	d->rays = mlx_new_image(d->mlx, WIDTH, HEIGHT);
-	ft_draw_line(d->rays, d->player->instances[0].x + 12, d->player->instances[0].y + 12, wall_hit_x_horizontal, wall_hit_y_horizontal);
+	ft_draw_line(d->rays, d->player->instances[0].x + 12, d->player->instances[0].y + 12, wall_hit_x, wall_hit_y);
 	mlx_image_to_window(d->mlx, d->rays, 0, 0);
 
 	
@@ -142,10 +222,10 @@ void ft_draw_player(void *data)
 
 	//asignacion de la direccion del player, en radianes
 	d->data_player.angle_rotation += (d->data_player.turn_on * d->data_player.speed_turn_on);
+	if (d->data_player.angle_rotation <= 0.0) //para que no pase a radianes negativos y conectar ambos limites
+		d->data_player.angle_rotation += (2 * M_PI);
 	if (d->data_player.angle_rotation >= (2 * M_PI)) //para que no pase los radians del maximo en grados 
 		d->data_player.angle_rotation -= (2 * M_PI);
-	if (d->data_player.angle_rotation < 0.0) //para que no pase a radianes negativos y conectar ambos limites
-		d->data_player.angle_rotation += (2 * M_PI);
 	
 	//asignacion de variable south y west
 	if (d->data_player.angle_rotation < M_PI)

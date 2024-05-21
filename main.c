@@ -31,9 +31,9 @@ void ft_hook(void* param)
 	if (mlx_is_key_down(d->mlx, MLX_KEY_S) == true)
 		d->data_player.advance -= 1;
 	if (mlx_is_key_down(d->mlx, MLX_KEY_D) == true)
-		d->data_player.turn_on += 1;
+		d->data_player.turn_on = 1;
 	if (mlx_is_key_down(d->mlx, MLX_KEY_A) == true)
-		d->data_player.turn_on -= 1;
+		d->data_player.turn_on = -1;
 	ft_draw_player(param);
 	ft_draw_ray(param);
 	//hola ales, esto es setear los valores a 0 cuando ya se han pulsado, es mi implementacion del hook_key_release
