@@ -14,7 +14,7 @@ NAME	=	cub3d
 
 CC		=	gcc
 
-FLAGS	=	-Wall -Wextra -Werror -MMD -g
+FLAGS	=	-Wall -Wextra -Werror -MMD -g -fsanitize=address
 
 MLX_F	=	-Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
 
