@@ -77,17 +77,17 @@ int main(void)
 	ft_draw_square(d.player, 25, 25, 3);
 	mlx_image_to_window(d.mlx, d.player, 200, 200);
 
-	
-	//dibuja la imagen de la linea en direccion 0 radianes y coordenadas para que el centro coincida con el player (coordenadas iniciales - tamaño player)
-	d.line = mlx_new_image(d.mlx, 75, 75);
-	ft_draw_line(d.line, 38, 38, 75, 38); //x0,y0 = centro de la imagen (x / 2 + 1, y / 2 + 1). x1 = borde derecho (75), y1 = y0 (linea horizontal)
-	mlx_image_to_window(d.mlx, d.line, 175, 175);
-	
-	
 	//inicializa la imagen que contendra los rayos y dibuja el primero en el centro del FOV
 	d.rays = mlx_new_image(d.mlx, WIDTH, HEIGHT);
 	ft_draw_ray(&d);
 	mlx_image_to_window(d.mlx, d.rays, 0, 0);
+	
+	//dibuja la imagen de la linea en direccion 0 radianes y coordenadas para que el centro coincida con el player (coordenadas iniciales - tamaño player)
+	/*d.line = mlx_new_image(d.mlx, 75, 75);
+	ft_draw_line(d.line, 38, 38, 75, 38, 1); //x0,y0 = centro de la imagen (x / 2 + 1, y / 2 + 1). x1 = borde derecho (75), y1 = y0 (linea horizontal)
+	mlx_image_to_window(d.mlx, d.line, 175, 175);*/
+	
+	
 	
 
 	//hooks a eventos 

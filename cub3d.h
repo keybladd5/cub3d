@@ -22,6 +22,7 @@
 #define WIDTH 800 // x
 #define HEIGHT 600 // y
 #define TILE_SIZE 100 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
+#define FOV 60
 
 typedef struct s_data_player
 {
@@ -35,8 +36,10 @@ typedef struct s_data_player
 	int wall_hit_y;
 	bool west;
 	bool south;
-	bool x_impact;
-	bool y_impact;
+	int wall_hit_x_horizontal;
+	int wall_hit_y_horizontal;
+	int wall_hit_x_vertical;
+	int wall_hit_y_vertical;
 	double speed_advance; 
 	double speed_turn_on;
 	double angle_rotation; //en radianes
@@ -61,8 +64,12 @@ void ft_draw_player(void *data);
 
 void ft_draw_square(mlx_image_t *image, int x_limit, int y_limit, int color);
 
-void ft_draw_line(mlx_image_t* image, int x0, int y0, int x1, int y1);
+void ft_draw_line(mlx_image_t* image, int x0, int y0, int x1, int y1, int mode);
 
 void ft_draw_map(void *data);
 
 void ft_draw_ray(void *param);
+
+double ft_horizontal_collision(t_data *d);
+
+double ft_vertical_collision(t_data *d);
