@@ -53,7 +53,7 @@ int main(void)
 	d.data_player.angle_rotation = 0.0;
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_advance = 3.0;
-	d.data_player.speed_turn_on = 3.0 * (M_PI / 180.0);
+	d.data_player.speed_turn_on = 1.0 * (M_PI / 180.0);
 	
 	//nuevas variables añadidas para los rayos
 	d.data_player.west = false;

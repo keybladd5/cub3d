@@ -73,6 +73,8 @@ void ft_draw_ray(void *param)
 		d->data_player.wall_hit_y =  d->data_player.wall_hit_y_horizontal;
 		printf("x_c WIN\n");
 	}
+	else if (x_collision == y_collision)
+		printf("EQUALS\n");
 	else
 	{
 		d->data_player.wall_hit_x = d->data_player.wall_hit_x_vertical;
@@ -95,6 +97,8 @@ void ft_draw_player(void *data)
 	t_data *d = data;
 	double new_x;
 	double new_y;
+	d->data_player.south = false;
+	d->data_player.west = false;
 
 	//prevision de calculo de a donde se va a desplazar el player
 	new_x =  (double)d->player->instances[0].x + (d->data_player.advance * cos(d->data_player.angle_rotation) * d->data_player.speed_advance); 
@@ -111,12 +115,9 @@ void ft_draw_player(void *data)
 	//asignacion de variable south y west
 	if (d->data_player.angle_rotation < M_PI)
 		d->data_player.south = true;
-	else 
-		d->data_player.south = false;
+
 	if (d->data_player.angle_rotation > (M_PI/2) && d->data_player.angle_rotation < (3 * M_PI/2))
 		d->data_player.west = true;
-	else
-		d->data_player.west = false;
 
 	//checkeo de colisiones
 	if (g_map[(int)round(new_y + 12.0) / 100][(int)round(new_x + 12.0) / 100] == '0')//para imlementar la colision con los limites des de el primer punto dibujado del player
@@ -144,7 +145,7 @@ void ft_draw_player(void *data)
 	
 
 	printf("x = %d y = %d  radians = %f\n", d->player->instances[0].x,  d->player->instances[0].y, d->data_player.angle_rotation);//print de informacion de la posicion en pixels del cuadrado
-	//printf("speed = %d west = %d south = %d\n", d->data_player.advance, d->data_player.west, d->data_player.south);
+	printf("speed = %d west = %d south = %d\n", d->data_player.advance, d->data_player.west, d->data_player.south);
 }
 
 
