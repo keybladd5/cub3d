@@ -18,6 +18,7 @@
 #include <limits.h>
 #include "MLX42/include/MLX42/MLX42.h"
 #include <unistd.h>
+#include "libft/libft.h"
 
 #define WIDTH 800 // x
 #define HEIGHT 600 // y
@@ -28,21 +29,23 @@ typedef struct s_data_player
 {
 	int advance; 
 	int turn_on;
-	int y_intercept;
-	int x_intercept;
 	int next_y; //no asignada aun
 	int next_x; //no asignada aun
-	int wall_hit_x;
-	int wall_hit_y;
-	bool west;
-	bool south;
-	int wall_hit_x_horizontal;
-	int wall_hit_y_horizontal;
-	int wall_hit_x_vertical;
-	int wall_hit_y_vertical;
+	double wall_hit_x;
+	double wall_hit_y;
+	double wall_hit_x_horizontal;
+	double wall_hit_y_horizontal;
+	double wall_hit_x_vertical;
+	double wall_hit_y_vertical;
 	double speed_advance; 
 	double speed_turn_on;
 	double angle_rotation; //en radianes
+	double y_intercept;
+	double x_intercept;
+	double x;
+	double y;
+	bool west;
+	bool south;
 
 } t_data_player;
 
@@ -55,6 +58,7 @@ typedef struct s_data
 	mlx_image_t		*line;
 	mlx_image_t		*rays;
 	t_data_player	data_player;
+	char **map;
 
 }	t_data;
 
@@ -73,3 +77,5 @@ void ft_draw_ray(void *param);
 double ft_horizontal_collision(t_data *d);
 
 double ft_vertical_collision(t_data *d);
+
+int collider_checker(t_data *d, double x, double y);

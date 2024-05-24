@@ -19,13 +19,31 @@ int get_rgba(int r, int g, int b, int a)
     return (r << 24 | g << 16 | b << 8 | a);
 }
 
+void ft_free_map(char **map)
+{
+	int i;
+
+	i = 0;
+	while(map[i])
+	{
+		printf("%p\n", map[i]);
+		free(map[i]);
+		i++;
+	}
+	printf("%p\n", map);
+	free(map);
+}
+
 void ft_hook(void* param)
 {
 	t_data *d = param;
 
 	//implementacion de los hooks con datos como 1 o -1, para multiplicar por la velocidad de steps o speed_avance / speed_turn_on
 	if (mlx_is_key_down(d->mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(d->mlx);
+	{
+		ft_free_map(d->map);
+		return (mlx_close_window(d->mlx));
+	}
 	if (mlx_is_key_down(d->mlx, MLX_KEY_W) == true)
 		d->data_player.advance += 1;
 	if (mlx_is_key_down(d->mlx, MLX_KEY_S) == true)
@@ -46,6 +64,15 @@ void ft_hook(void* param)
 int main(void)
 {
 	t_data	d;
+
+	d.map = ft_calloc(8, sizeof(char *)); // init the map
+	d.map[0] = ft_strdup("11111111"); //fill the map
+	d.map[1] = ft_strdup("10000001");
+	d.map[2] = ft_strdup("10000001");
+	d.map[3] = ft_strdup("10000001");
+	d.map[4] = ft_strdup("10000001");
+	d.map[5] = ft_strdup("11111111");
+	d.map[6] = NULL;
 	//he añadido una serie de datos relevantes al player, que necesito pasar por referencia
 	//sin mallocs
 	d.data_player.advance = 0;
@@ -54,6 +81,8 @@ int main(void)
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_turn_on = 1.0 * (M_PI / 180.0);
+	d.data_player.x = 0.0;
+	d.data_player.y = 0.0;
 	
 	//nuevas variables añadidas para los rayos
 	d.data_player.west = false;
@@ -87,9 +116,6 @@ int main(void)
 	ft_draw_line(d.line, 38, 38, 75, 38, 1); //x0,y0 = centro de la imagen (x / 2 + 1, y / 2 + 1). x1 = borde derecho (75), y1 = y0 (linea horizontal)
 	mlx_image_to_window(d.mlx, d.line, 175, 175);*/
 	
-	
-	
-
 	//hooks a eventos 
 	mlx_loop_hook(d.mlx, ft_hook, &d);
 	mlx_loop(d.mlx);

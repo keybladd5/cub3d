@@ -12,15 +12,6 @@
 
 #include "cub3d.h"
 
-char g_map[7][9] = {
-    {'1', '1', '1', '1', '1', '1', '1', '1', '\0'},
-    {'1', '0', '0', '0', '0', '0', '0', '1', '\0'},
-    {'1', '0', '0', '1', '1', '1', '0', '1', '\0'},
-    {'1', '0', '0', '1', '0', '0', '0', '1', '\0'},
-	{'1', '0', '0', '0', '0', '0', '0', '1', '\0'},
-    {'1', '1', '1', '1', '1', '1', '1', '1', '\0'},
-    };
-
 // Función para dibujar una línea entre dos puntos en una imagen
 void ft_draw_line(mlx_image_t* image, int x0, int y0, int x1, int y1, int mode) 
 {
@@ -81,10 +72,10 @@ void ft_draw_ray(void *param)
 		d->data_player.wall_hit_y =  d->data_player.wall_hit_y_vertical;
 		printf("x_y WIN\n");
 	}
-	printf("x0: %d, y0: %d, x1: %d, y1: %d\n", d->player->instances[0].x + 12, d->player->instances[0].y + 12, d->data_player.wall_hit_x, d->data_player.wall_hit_y);
+	printf("x0: %d, y0: %d, x1: %f, y1: %f\n", d->player->instances[0].x + 12, d->player->instances[0].y + 12, floor(d->data_player.wall_hit_x), floor(d->data_player.wall_hit_y));
 	mlx_delete_image(d->mlx, d->rays);
 	d->rays = mlx_new_image(d->mlx, WIDTH, HEIGHT);
-	ft_draw_line(d->rays, d->player->instances[0].x + 12, d->player->instances[0].y + 12,  d->data_player.wall_hit_x, d->data_player.wall_hit_y, 2);
+	ft_draw_line(d->rays, d->player->instances[0].x + 12, d->player->instances[0].y + 12,  floor(d->data_player.wall_hit_x), floor(d->data_player.wall_hit_y), 2);
 	mlx_image_to_window(d->mlx, d->rays, 0, 0);
 
 	
@@ -101,8 +92,8 @@ void ft_draw_player(void *data)
 	d->data_player.west = false;
 
 	//prevision de calculo de a donde se va a desplazar el player
-	new_x =  (double)d->player->instances[0].x + (d->data_player.advance * cos(d->data_player.angle_rotation) * d->data_player.speed_advance); 
-	new_y =  (double)d->player->instances[0].y + (d->data_player.advance * sin(d->data_player.angle_rotation) * d->data_player.speed_advance);
+	new_x =  (double)d->player->instances[0].x  + (d->data_player.advance * cos(d->data_player.angle_rotation) * d->data_player.speed_advance); 
+	new_y =  (double)d->player->instances[0].y  +  (d->data_player.advance * sin(d->data_player.angle_rotation) * d->data_player.speed_advance);
 	//printf("new_x = %f new_y = %f radians = %f \n", new_x, new_y, d->data_player.angle_rotation);//print de informacion x terminal
 
 	//asignacion de la direccion del player, en radianes
@@ -113,17 +104,19 @@ void ft_draw_player(void *data)
 		d->data_player.angle_rotation -= (2 * M_PI);
 	
 	//asignacion de variable south y west
-	if (d->data_player.angle_rotation < M_PI)
+	if (d->data_player.angle_rotation > 0 && d->data_player.angle_rotation < M_PI)
 		d->data_player.south = true;
 
 	if (d->data_player.angle_rotation > (M_PI/2) && d->data_player.angle_rotation < (3 * M_PI/2))
 		d->data_player.west = true;
 
 	//checkeo de colisiones
-	if (g_map[(int)round(new_y + 12.0) / 100][(int)round(new_x + 12.0) / 100] == '0')//para imlementar la colision con los limites des de el primer punto dibujado del player
+	if (collider_checker(d, new_y + 12, new_x + 12))//para imlementar la colision con los limites des de el primer punto dibujado del player
 	{
-		d->player->instances[0].x = round(new_x);//round =  funcion para redondear el dato double a integer
-		d->player->instances[0].y = round(new_y);
+		d->player->instances[0].x = roundf(new_x);//round =  funcion para redondear el dato double a integer
+		d->player->instances[0].y = roundf(new_y);
+		d->data_player.x = new_x;
+		d->data_player.y = new_y;
 	}
 	
 	//redibujar linea en la direccion del player si hay rotacion
@@ -188,11 +181,11 @@ void ft_draw_map(void *data)
 		x = 0;
 		while (x < 8)
 		{
-			if (g_map[y][x] == '1')
+			if (d->map[y][x] == '1')
 			{
 				mlx_image_to_window(d->mlx, d->square_b, (x * 100), (y * 100));
 			}
-			else if (g_map[y][x] == '0')
+			else if (d->map[y][x] == '0')
 			{
 				mlx_image_to_window(d->mlx, d->square_w, (x * 100), (y *  100));
 			}
