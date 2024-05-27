@@ -12,12 +12,6 @@
 
 #include "cub3d.h"
 
-//funcion para obtener el color al llamar a put_pixel
-//si se llama a esta funcion con a en 0, hace el color completamente trnasparente, si se hace con 255, sin transparencia
-int get_rgba(int r, int g, int b, int a)
-{
-    return (r << 24 | g << 16 | b << 8 | a);
-}
 
 void ft_free_map(char **map)
 {
@@ -34,31 +28,14 @@ void ft_free_map(char **map)
 	free(map);
 }
 
-void ft_hook(void* param)
+void ft_game_loop(void *param)
 {
 	t_data *d = param;
-
-	//implementacion de los hooks con datos como 1 o -1, para multiplicar por la velocidad de steps o speed_avance / speed_turn_on
-	if (mlx_is_key_down(d->mlx, MLX_KEY_ESCAPE))
-	{
-		ft_free_map(d->map);
-		return (mlx_close_window(d->mlx));
-	}
-	if (mlx_is_key_down(d->mlx, MLX_KEY_W) == true)
-		d->data_player.advance += 1;
-	if (mlx_is_key_down(d->mlx, MLX_KEY_S) == true)
-		d->data_player.advance -= 1;
-	if (mlx_is_key_down(d->mlx, MLX_KEY_D) == true)
-		d->data_player.turn_on = 1;
-	if (mlx_is_key_down(d->mlx, MLX_KEY_A) == true)
-		d->data_player.turn_on = -1;
-	ft_draw_player(param);
-	ft_draw_ray(param);
-	//hola ales, esto es setear los valores a 0 cuando ya se han pulsado, es mi implementacion del hook_key_release
-	if (d->data_player.advance != 0)
-		d->data_player.advance = 0;
-	if (d->data_player.turn_on != 0)
-		d->data_player.turn_on = 0;
+	mlx_delete_image(d->mlx, d->image);
+	d->image = mlx_new_image(d->mlx, 0, 0);
+	ft_movement_hook(d);
+	ft_cast_rays(d);
+	mlx_image_to_window(d->mlx, d->image, 0, 0);
 }
 
 int main(void)
@@ -77,39 +54,41 @@ int main(void)
 	//sin mallocs
 	d.data_player.advance = 0;
 	d.data_player.turn_on =  0;
-	d.data_player.angle_rotation = 0.0;
+	d.data_player.angle_rotation = M_PI;
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_turn_on = 1.0 * (M_PI / 180.0);
 	d.data_player.x = 0.0;
 	d.data_player.y = 0.0;
+	d.data_player.fov_radians = (FOV * M_PI) / 180;
+
 	
 	//nuevas variables añadidas para los rayos
 	d.data_player.west = false;
 	d.data_player.south = false;
-	d.data_player.x_intercept = 0;
-	d.data_player.y_intercept = 0;
+	d.cast_rays.x_intercept = 0;
+	d.cast_rays.y_intercept = 0;
 
 	//carga la ventana
 	d.mlx = mlx_init(WIDTH, HEIGHT, "cub3d", true);
 
-	//new_image define una imagen con sus tamaños y el ptr a la ventana, despues se dibuja con draw_square
+	/*//new_image define una imagen con sus tamaños y el ptr a la ventana, despues se dibuja con draw_square
 	d.square_b = mlx_new_image(d.mlx, 100, 100);
 	ft_draw_square(d.square_b, 100, 100, 1);
 	d.square_w = mlx_new_image(d.mlx, 100, 100);
 	ft_draw_square(d.square_w, 100, 100, 2);
 	//se dibuja el mapa solo una vez
-	ft_draw_map(&d);
+	ft_draw_map(&d);*/
 
-	//dibuja el jugador en las coordenadas iniciales (200,200)
+	/*//dibuja el jugador en las coordenadas iniciales (200,200)
 	d.player = mlx_new_image(d.mlx, 25, 25);
 	ft_draw_square(d.player, 25, 25, 3);
-	mlx_image_to_window(d.mlx, d.player, 200, 200);
+	mlx_image_to_window(d.mlx, d.player, 200, 200);*/
 
 	//inicializa la imagen que contendra los rayos y dibuja el primero en el centro del FOV
-	d.rays = mlx_new_image(d.mlx, WIDTH, HEIGHT);
-	ft_draw_ray(&d);
-	mlx_image_to_window(d.mlx, d.rays, 0, 0);
+	d.image = mlx_new_image(d.mlx, WIDTH, HEIGHT);
+	ft_cast_rays(&d);
+	mlx_image_to_window(d.mlx, d.image, 0, 0);
 	
 	//dibuja la imagen de la linea en direccion 0 radianes y coordenadas para que el centro coincida con el player (coordenadas iniciales - tamaño player)
 	/*d.line = mlx_new_image(d.mlx, 75, 75);

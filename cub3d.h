@@ -29,25 +29,32 @@ typedef struct s_data_player
 {
 	int advance; 
 	int turn_on;
-	int next_y; //no asignada aun
-	int next_x; //no asignada aun
-	double wall_hit_x;
-	double wall_hit_y;
-	double wall_hit_x_horizontal;
-	double wall_hit_y_horizontal;
-	double wall_hit_x_vertical;
-	double wall_hit_y_vertical;
 	double speed_advance; 
 	double speed_turn_on;
 	double angle_rotation; //en radianes
-	double y_intercept;
-	double x_intercept;
 	double x;
 	double y;
+	double fov_radians;
 	bool west;
 	bool south;
 
 } t_data_player;
+
+typedef struct s_rays
+{
+	int next_y; //no asignada aun
+	int next_x; //no asignada aun
+	int flag;
+	double wall_hit_x_horizontal;
+	double wall_hit_y_horizontal;
+	double wall_hit_x_vertical;
+	double wall_hit_y_vertical;	
+	double y_intercept;
+	double x_intercept;
+	double ray_ngl;
+	double distance;
+
+}	t_rays;
 
 typedef struct s_data
 {
@@ -56,9 +63,10 @@ typedef struct s_data
 	mlx_image_t		*square_w;
 	mlx_image_t		*player;
 	mlx_image_t		*line;
-	mlx_image_t		*rays;
+	mlx_image_t		*image;
 	t_data_player	data_player;
-	char **map;
+	t_rays			cast_rays;
+	char 			**map;
 
 }	t_data;
 
@@ -74,8 +82,20 @@ void ft_draw_map(void *data);
 
 void ft_draw_ray(void *param);
 
-double ft_horizontal_collision(t_data *d);
+double ft_horizontal_collision(t_data *d, double angle);
 
-double ft_vertical_collision(t_data *d);
+double ft_vertical_collision(t_data *d, double angle);
 
 int collider_checker(t_data *d, double x, double y);
+
+void ft_cast_rays(t_data *d);
+
+double nor_angle(double angle);
+
+void	draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix);
+
+void	draw_wall(t_data *d, int ray, int t_pix, int b_pix);
+
+int color_walls(t_data *d, int flag);
+
+void render_walls(t_data *d, int ray);
