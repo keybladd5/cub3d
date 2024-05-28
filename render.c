@@ -31,18 +31,96 @@ int collider_checker(t_data *d, double y, double x)
 		return (0);
 	x_m = floor(x  / TILE_SIZE); // get the x position in the map
 	y_m = floor(y  / TILE_SIZE); // get the y position in the map
-	if ((y_m >= HEIGHT || x_m >= WIDTH))
+	if (y_m  >= 6 || y_m <= 0)
 		return (0);
-	printf("y_m = %d x_m = %d\n", y_m, x_m);
-	if (y_m  > 6 || y_m < 0)
-		return (0);
-	if (d->map[y_m] && x_m <= (int)ft_strlen(d->map[y_m]))
+	if (d->map[y_m] && x_m <= (int)strlen(d->map[y_m]))
 		if (d->map[y_m][x_m] == '1')
 			return (0);
 	return (1);
 }
+int	unit_circle(double angle, char c)	// check the unit circle
+{
+	if (c == 'x')
+	{
+		if (angle > 0 && angle < M_PI)
+			return (1);
+	}
+	else if (c == 'y')
+	{
+		if (angle > (M_PI / 2) && angle < (3 * M_PI) / 2)
+			return (1);
+	}
+	return (0);
+}
 
-double ft_horizontal_collision(t_data *d, double angle)
+int	inter_check(double angle, double *inter, double *step, int is_horizon)	// check the intersection
+{
+	if (is_horizon)
+	{
+		if (angle > 0 && angle < M_PI)
+		{
+			*inter += TILE_SIZE;
+			return (-1);
+		}
+		*step *= -1;
+	}
+	else
+	{
+		if (!(angle > M_PI / 2 && angle < 3 * M_PI / 2)) 
+		{
+			*inter += TILE_SIZE;
+			return (-1);
+		}
+		*step *= -1;
+	}
+	return (1);
+}
+double	get_h_inter(t_data *d, double angl)	// get the horizontal intersection
+{
+	double	h_x;
+	double	h_y;
+	double	x_step;
+	double	y_step;
+	int		pixel;
+
+	y_step = TILE_SIZE;
+	x_step = TILE_SIZE / tan(angl);
+	h_y = floor(d->data_player.y / TILE_SIZE) * TILE_SIZE;
+	pixel = inter_check(angl, &h_y, &y_step, 1);
+	h_x = d->data_player.x + (h_y - d->data_player.y) / tan(angl);
+	if ((unit_circle(angl, 'y') && x_step > 0) || (!unit_circle(angl, 'y') && x_step < 0)) // check x_step value
+		x_step *= -1;
+	while (collider_checker(d, h_y - pixel, h_x)) // check the wall hit whit the pixel value
+	{
+		h_x += x_step;
+		h_y += y_step;
+	}
+	return (sqrt(pow(h_x - d->data_player.x, 2) + pow(h_y - d->data_player.y, 2))); // get the distance
+}
+
+double	get_v_inter(t_data *d, double angl)	// get the vertical intersection
+{
+	double	v_x;
+	double	v_y;
+	double	x_step;
+	double	y_step;
+	int		pixel;
+
+	x_step = TILE_SIZE; 
+	y_step = TILE_SIZE * tan(angl);
+	v_x = floor(d->data_player.x / TILE_SIZE) * TILE_SIZE;
+	pixel = inter_check(angl, &v_x, &x_step, 0); // check the intersection and get the pixel value
+	v_y = d->data_player.y + (v_x - d->data_player.x ) * tan(angl);
+	if ((unit_circle(angl, 'x') && y_step < 0) || (!unit_circle(angl, 'x') && y_step > 0)) // check y_step value
+		y_step *= -1;
+	while (collider_checker(d, v_y, v_x - pixel)) // check the wall hit whit the pixel value
+	{
+		v_x += x_step;
+		v_y += y_step;
+	}
+	return (sqrt(pow(v_x - d->data_player.x, 2) + pow(v_y - d->data_player.y, 2)));
+}
+/*double ft_horizontal_collision(t_data *d, double angle)
 {
 	double adjacent_side;
 	double x_step;
@@ -83,9 +161,9 @@ double ft_horizontal_collision(t_data *d, double angle)
 	d->cast_rays.wall_hit_y_horizontal = next_y_horizontal;
 
 	return (sqrt(pow(d->cast_rays.wall_hit_x_horizontal - d->data_player.x, 2) + pow(d->cast_rays.wall_hit_y_horizontal - d->data_player.y, 2)));
-}
+}*/
 
-double ft_vertical_collision(t_data *d, double angle)
+/*double ft_vertical_collision(t_data *d, double angle)
 {
 	double oposite_side = 0;
 	double x_step = 0;
@@ -125,7 +203,7 @@ double ft_vertical_collision(t_data *d, double angle)
 	d->cast_rays.wall_hit_x_vertical = next_x_vertical;
 	d->cast_rays.wall_hit_y_vertical = next_y_vertical;
 	return (sqrt(pow(d->cast_rays.wall_hit_x_vertical - d->data_player.x, 2) + pow(d->cast_rays.wall_hit_y_vertical - d->data_player.y, 2)));
-}
+}*/
 
 void render_walls(t_data *d, int ray)
 {
@@ -133,6 +211,7 @@ void render_walls(t_data *d, int ray)
 	double	b_pix;
 	double	t_pix;
 
+	d->cast_rays.distance *= cos(nor_angle(d->cast_rays.ray_ngl - d->data_player.angle_rotation));
 	wall_h = (TILE_SIZE / d->cast_rays.distance) * ((WIDTH / 2) / tan(d->data_player.fov_radians / 2));
 	b_pix = (HEIGHT / 2) + (wall_h / 2);
 	t_pix = (HEIGHT / 2) - (wall_h / 2);
@@ -149,16 +228,17 @@ void ft_cast_rays(t_data *d)
 	double y_collision; 
 	int ray = 0;
 	d->cast_rays.ray_ngl = d->data_player.angle_rotation - (d->data_player.fov_radians / 2);
+	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
 	while (ray < WIDTH)
 	{
 		d->cast_rays.flag = 0;
-		x_collision = ft_horizontal_collision(d, nor_angle(d->data_player.angle_rotation));
-		y_collision = ft_vertical_collision(d, nor_angle(d->data_player.angle_rotation));
+		x_collision = get_h_inter(d, nor_angle(d->data_player.angle_rotation));
+		y_collision = get_v_inter(d, nor_angle(d->data_player.angle_rotation));
 		if (y_collision <= x_collision) // check the distance
 			d->cast_rays.distance = y_collision; // get the distance
 		else
 		{
-			d->cast_rays.distance =x_collision; // get the distance
+			d->cast_rays.distance = x_collision; // get the distance
 			d->cast_rays.flag = 1; // flag for the wall
 		}
 		render_walls(d, ray);

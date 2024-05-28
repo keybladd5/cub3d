@@ -32,8 +32,8 @@ typedef struct s_data_player
 	double speed_advance; 
 	double speed_turn_on;
 	double angle_rotation; //en radianes
-	double x;
-	double y;
+	int x;
+	int y;
 	double fov_radians;
 	bool west;
 	bool south;
@@ -99,3 +99,21 @@ void	draw_wall(t_data *d, int ray, int t_pix, int b_pix);
 int color_walls(t_data *d, int flag);
 
 void render_walls(t_data *d, int ray);
+
+void ft_movement_hook(void *d);
+
+void ft_move_player(t_data *d);
+
+void ft_free_map(char **map);
+
+void safe_pixel_put(mlx_image_t *image, int x, int y, int color);
+
+double	get_h_inter(t_data *d, double angl);
+
+int	inter_check(double angle, double *inter, double *step, int is_horizon);
+
+int	unit_circle(double angle, char c);
+
+double	get_v_inter(t_data *d, double angl);
+
+void change_map_position(t_data *d);
