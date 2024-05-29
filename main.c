@@ -12,7 +12,7 @@
 
 #include "cub3d.h"
 
-
+//libera el mapa
 void ft_free_map(char **map)
 {
 	int i;
@@ -45,7 +45,7 @@ int main(void)
 	d.map = ft_calloc(8, sizeof(char *)); // init the map
 	d.map[0] = ft_strdup("11111111"); //fill the map
 	d.map[1] = ft_strdup("10000001");
-	d.map[2] = ft_strdup("10P00001");
+	d.map[2] = ft_strdup("10000001");
 	d.map[3] = ft_strdup("10000001");
 	d.map[4] = ft_strdup("10000001");
 	d.map[5] = ft_strdup("11111111");
@@ -54,7 +54,7 @@ int main(void)
 	//sin mallocs
 	d.data_player.advance = 0;
 	d.data_player.turn_on =  0;
-	d.data_player.angle_rotation = M_PI;
+	d.data_player.angle_rotation = 0.0;
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_advance = 3.0;
 	d.data_player.speed_turn_on = 1.0 * (M_PI / 180.0);

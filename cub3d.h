@@ -34,7 +34,7 @@ typedef struct s_data_player
 	double angle_rotation; //en radianes
 	int x;
 	int y;
-	double fov_radians;
+	float fov_radians;
 	bool west;
 	bool south;
 

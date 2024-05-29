@@ -31,24 +31,29 @@ int collider_checker(t_data *d, double y, double x)
 		return (0);
 	x_m = floor(x  / TILE_SIZE); // get the x position in the map
 	y_m = floor(y  / TILE_SIZE); // get the y position in the map
-	if (y_m  >= 6 || y_m <= 0)
+	if (y_m  >= 6 || y_m <= 0) //cambiar por tamaño mapa
 		return (0);
 	if (d->map[y_m] && x_m <= (int)strlen(d->map[y_m]))
 		if (d->map[y_m][x_m] == '1')
 			return (0);
 	return (1);
 }
+
 int	unit_circle(double angle, char c)	// check the unit circle
 {
 	if (c == 'x')
 	{
 		if (angle > 0 && angle < M_PI)
-			return (1);
+			return (1); //d->data_player.south = true;
+		//else
+			////d->data_player.south = false;
 	}
 	else if (c == 'y')
 	{
 		if (angle > (M_PI / 2) && angle < (3 * M_PI) / 2)
-			return (1);
+			return (1); //d->data_player.west = true;
+		//else
+			//d->data_player.west = false;
 	}
 	return (0);
 }
@@ -75,6 +80,7 @@ int	inter_check(double angle, double *inter, double *step, int is_horizon)	// ch
 	}
 	return (1);
 }
+
 double	get_h_inter(t_data *d, double angl)	// get the horizontal intersection
 {
 	double	h_x;
@@ -120,90 +126,6 @@ double	get_v_inter(t_data *d, double angl)	// get the vertical intersection
 	}
 	return (sqrt(pow(v_x - d->data_player.x, 2) + pow(v_y - d->data_player.y, 2)));
 }
-/*double ft_horizontal_collision(t_data *d, double angle)
-{
-	double adjacent_side;
-	double x_step;
-	double y_step;
-	int pixel = 0;
-
-	//CALCULO DE DISTANCIA DE STEPS Y PIXEL
-	y_step = TILE_SIZE;
-	x_step = y_step / tan(angle);
-	if (!d->data_player.south)
-		y_step *= -1;
-	if ((d->data_player.west && x_step > 0) || (!d->data_player.west && x_step < 0))
-		x_step *= -1;
-
-	//CALCULO DEL CATETO ADYACENTE Y LOS X Y QUE VAN A INTERCEPTAR
-	d->cast_rays.y_intercept = floor(((d->data_player.y) / TILE_SIZE) * TILE_SIZE);
-	if (d->data_player.south)
-	{
-		d->cast_rays.y_intercept += TILE_SIZE;		
-		pixel -= 1;
-	}
-	else
-		pixel += 1;
-	adjacent_side = (d->cast_rays.y_intercept - d->data_player.y) / tan(angle);
-	d->cast_rays.x_intercept = (d->data_player.x) + adjacent_side;
-
-
-	// EL BUCLE DE COLISION HORIZONTAL
-	int next_x_horizontal = d->cast_rays.x_intercept;
-	int next_y_horizontal = d->cast_rays.y_intercept;
-
-	while(collider_checker(d, next_x_horizontal, next_y_horizontal - pixel))
-	{
-		next_x_horizontal += x_step;
-		next_y_horizontal += y_step;
-	}
-	d->cast_rays.wall_hit_x_horizontal = next_x_horizontal;
-	d->cast_rays.wall_hit_y_horizontal = next_y_horizontal;
-
-	return (sqrt(pow(d->cast_rays.wall_hit_x_horizontal - d->data_player.x, 2) + pow(d->cast_rays.wall_hit_y_horizontal - d->data_player.y, 2)));
-}*/
-
-/*double ft_vertical_collision(t_data *d, double angle)
-{
-	double oposite_side = 0;
-	double x_step = 0;
-	double y_step = 0;
-	double next_x_vertical = 0;
-	double next_y_vertical = 0;
-	int pixel = 0;
-
-	//CALCULO DE DISTANCIAS DE STEPS
-	x_step = TILE_SIZE;
-	if (d->data_player.west)
-		x_step *= -1;
-	y_step = TILE_SIZE * tan(angle);
-	if ((!d->data_player.south && y_step > 0) || (d->data_player.south && y_step < 0))
-		y_step *= -1;
-
-	//CALCULO DEL CATETO OPUESTO Y X Y QUE VAN A INTERCEPTAR
-	d->cast_rays.x_intercept = floor(((d->data_player.x) / TILE_SIZE) * TILE_SIZE);
-	if (!d->data_player.west)
-	{
-		pixel -= 1;
-		d->cast_rays.x_intercept += TILE_SIZE;
-	}
-	else
-		pixel += 1;
-	oposite_side = (d->cast_rays.x_intercept - d->data_player.x) * tan(angle);
-	d->cast_rays.y_intercept = (d->data_player.y) + oposite_side;
-	next_y_vertical = d->cast_rays.y_intercept;
-	next_x_vertical = d->cast_rays.x_intercept;
-
-	//bucle de checkeo de colision en vertical
-	while(collider_checker(d, next_y_vertical, next_x_vertical - pixel))
-	{
-		next_x_vertical += x_step;
-		next_y_vertical += y_step;
-	}
-	d->cast_rays.wall_hit_x_vertical = next_x_vertical;
-	d->cast_rays.wall_hit_y_vertical = next_y_vertical;
-	return (sqrt(pow(d->cast_rays.wall_hit_x_vertical - d->data_player.x, 2) + pow(d->cast_rays.wall_hit_y_vertical - d->data_player.y, 2)));
-}*/
 
 void render_walls(t_data *d, int ray)
 {
@@ -222,18 +144,20 @@ void render_walls(t_data *d, int ray)
 	draw_wall(d, ray, t_pix, b_pix); // draw the wall
 	draw_floor_ceiling(d, ray, t_pix, b_pix); // draw the floor and the ceiling
 }
+
 void ft_cast_rays(t_data *d)
 {
 	double x_collision;
-	double y_collision; 
+	double y_collision;
 	int ray = 0;
 	d->cast_rays.ray_ngl = d->data_player.angle_rotation - (d->data_player.fov_radians / 2);
 	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
 	while (ray < WIDTH)
 	{
+		printf("ray #%d, ray_ngl: %f\n", ray, d->cast_rays.ray_ngl);
 		d->cast_rays.flag = 0;
-		x_collision = get_h_inter(d, nor_angle(d->data_player.angle_rotation));
-		y_collision = get_v_inter(d, nor_angle(d->data_player.angle_rotation));
+		x_collision = get_h_inter(d, nor_angle(d->cast_rays.ray_ngl));
+		y_collision = get_v_inter(d, nor_angle(d->cast_rays.ray_ngl));
 		if (y_collision <= x_collision) // check the distance
 			d->cast_rays.distance = y_collision; // get the distance
 		else
