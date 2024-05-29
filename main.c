@@ -27,7 +27,30 @@ void ft_free_map(char **map)
 	printf("%p\n", map);
 	free(map);
 }
+void ft_read_map(t_data *d, char **map)
+{
+	int y;
+	int x;
 
+	y = 0;
+	while (map[y])
+	{
+		x = 0;
+		while (map[y][x])
+		{
+			x++;
+			if (map[y][x] == 'P')
+			{
+				d->map_x = x;
+				d->map_y = y;
+			}
+			if (!map[y][x])
+				d->size_x = x;
+		}
+		y++;
+	}
+	d->size_y = y;
+}
 void ft_game_loop(void *param)
 {
 	t_data *d = param;
@@ -44,22 +67,25 @@ int main(void)
 
 	d.map = ft_calloc(8, sizeof(char *)); // init the map
 	d.map[0] = ft_strdup("11111111"); //fill the map
-	d.map[1] = ft_strdup("10000001");
-	d.map[2] = ft_strdup("10000001");
-	d.map[3] = ft_strdup("10000001");
-	d.map[4] = ft_strdup("10000001");
+	d.map[1] = ft_strdup("10010001");
+	d.map[2] = ft_strdup("10010001");
+	d.map[3] = ft_strdup("100P0001");
+	d.map[4] = ft_strdup("10010001");
 	d.map[5] = ft_strdup("11111111");
 	d.map[6] = NULL;
 	//he añadido una serie de datos relevantes al player, que necesito pasar por referencia
 	//sin mallocs
+	ft_read_map(&d, d.map);
+	//d.map_x = 2;
+	//d.map_y = 2;
+	d.fish_eye = 0;
 	d.data_player.advance = 0;
 	d.data_player.turn_on =  0;
 	d.data_player.angle_rotation = 0.0;
-	d.data_player.speed_advance = 3.0;
-	d.data_player.speed_advance = 3.0;
-	d.data_player.speed_turn_on = 1.0 * (M_PI / 180.0);
-	d.data_player.x = 200;
-	d.data_player.y = 200;
+	d.data_player.speed_advance = 5.0;
+	d.data_player.speed_turn_on = 3.0 * (M_PI / 180.0);
+	d.data_player.x = d.map_x * TILE_SIZE + TILE_SIZE / 2;
+	d.data_player.y = d.map_x * TILE_SIZE + TILE_SIZE / 2;
 	d.data_player.fov_radians = (FOV * M_PI) / 180;
 
 	

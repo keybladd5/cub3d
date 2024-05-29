@@ -29,7 +29,6 @@ void safe_pixel_put(mlx_image_t *image, int x, int y, int color)
 		return ;
 	else if (y >= HEIGHT)
 		return ;
-	//printf("x -> %d y -> %d\n", x, y);
 	mlx_put_pixel(image, x, y, color); // put the pixel
 }
 int color_walls(t_data *d, int flag)
@@ -56,9 +55,11 @@ void	draw_wall(t_data *d, int ray, int t_pix, int b_pix)	// draw the wall
 
 	color = color_walls(d, d->cast_rays.flag);
 	while (t_pix < b_pix)
-	{	
-		//printf("pixel a pintar %d ray %d\n", t_pix, ray);
-		safe_pixel_put(d->image, ray, t_pix++, color);
+	{
+		if(t_pix == 0 || t_pix == HEIGHT)
+			safe_pixel_put(d->image, ray, t_pix++, get_rgba(0, 0, 0, 255));
+		else
+			safe_pixel_put(d->image, ray, t_pix++, color);
 	}
 }
 
@@ -68,8 +69,8 @@ void	draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix)	// draw the fl
 
 	i = b_pix;
 	while (i < HEIGHT)
-		safe_pixel_put(d->image, ray, i++, 0xB99470FF/*get_rgba(0, 0, 0, 255)*/); // floor
+		safe_pixel_put(d->image, ray, i++, get_rgba(189, 181, 125, 125)); // floor
 	i = 0;
 	while (i < t_pix)
-		safe_pixel_put(d->image, ray, i++, 0x89CFF3FF/*get_rgba(255, 255, 255, 255)*/); // ceiling
+		safe_pixel_put(d->image, ray, i++, get_rgba(255, 255, 255, 125)); // ceiling
 }

@@ -32,6 +32,9 @@ void ft_movement_hook(void *param)
 		d->data_player.turn_on = 1;
 	if (mlx_is_key_down(d->mlx, MLX_KEY_A) == true)
 		d->data_player.turn_on = -1;
+	if (mlx_is_key_down(d->mlx, MLX_KEY_LEFT) == true)
+		d->fish_eye = 1;
+
 	d->data_player.angle_rotation += (d->data_player.turn_on * d->data_player.speed_turn_on);
 	d->data_player.angle_rotation = nor_angle(d->data_player.angle_rotation);
 	ft_move_player(d);
@@ -41,6 +44,8 @@ void ft_movement_hook(void *param)
 		d->data_player.advance = 0;
 	if (d->data_player.turn_on != 0)
 		d->data_player.turn_on = 0;
+	if (d->fish_eye != 0)
+		d->fish_eye = 0;
 
 }
 
@@ -53,13 +58,12 @@ void ft_move_player(t_data *d)
 	int map_grid_x = (new_x / TILE_SIZE); // get the x position in the map
 	int map_grid_y = (new_y / TILE_SIZE); 
 	//checkeo de colisiones
-	printf("d->data_player.x -> %d d->data_player.y -> %d d->data_player.angle_rotation = %f\n", d->data_player.x, d->data_player.y, d->data_player.angle_rotation );
-	printf("new_x -> %d new_y -> %d\n", new_x, new_y);
+	//printf("d->data_player.x -> %d d->data_player.y -> %d d->data_player.angle_rotation = %f\n", d->data_player.x, d->data_player.y, d->data_player.angle_rotation );
+	//printf("new_x -> %d new_y -> %d\n", new_x, new_y);
 	if (d->map[map_grid_y][map_grid_x] != '1' && \
 	(d->map[map_grid_y][d->data_player.x / TILE_SIZE] != '1' && \
 	d->map[d->data_player.y / TILE_SIZE][map_grid_x] != '1')) // check the wall hit and the diagonal wall hit)
 	{	
-		printf("no hay impacto\n");
 		d->data_player.x = new_x;
 		d->data_player.y = new_y;
 	}

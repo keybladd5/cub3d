@@ -31,7 +31,8 @@ int collider_checker(t_data *d, double y, double x)
 		return (0);
 	x_m = floor(x  / TILE_SIZE); // get the x position in the map
 	y_m = floor(y  / TILE_SIZE); // get the y position in the map
-	if (y_m  >= 6 || y_m <= 0) //cambiar por tamaño mapa
+	//printf("%d, %d \n",d->size_y, d->size_x);
+	if (y_m  >= d->size_y || x_m >= d->size_x) //cambiado por tamaño mapa
 		return (0);
 	if (d->map[y_m] && x_m <= (int)strlen(d->map[y_m]))
 		if (d->map[y_m][x_m] == '1')
@@ -133,7 +134,8 @@ void render_walls(t_data *d, int ray)
 	double	b_pix;
 	double	t_pix;
 
-	d->cast_rays.distance *= cos(nor_angle(d->cast_rays.ray_ngl - d->data_player.angle_rotation));
+	if (!d->fish_eye)
+		d->cast_rays.distance *= cos(nor_angle(d->cast_rays.ray_ngl - d->data_player.angle_rotation));//corect fish eye
 	wall_h = (TILE_SIZE / d->cast_rays.distance) * ((WIDTH / 2) / tan(d->data_player.fov_radians / 2));
 	b_pix = (HEIGHT / 2) + (wall_h / 2);
 	t_pix = (HEIGHT / 2) - (wall_h / 2);
@@ -154,7 +156,7 @@ void ft_cast_rays(t_data *d)
 	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
 	while (ray < WIDTH)
 	{
-		printf("ray #%d, ray_ngl: %f\n", ray, d->cast_rays.ray_ngl);
+		//printf("ray #%d, ray_ngl: %f\n", ray, d->cast_rays.ray_ngl);
 		d->cast_rays.flag = 0;
 		x_collision = get_h_inter(d, nor_angle(d->cast_rays.ray_ngl));
 		y_collision = get_v_inter(d, nor_angle(d->cast_rays.ray_ngl));

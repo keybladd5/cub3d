@@ -20,9 +20,9 @@
 #include <unistd.h>
 #include "libft/libft.h"
 
-#define WIDTH 800 // x
-#define HEIGHT 600 // y
-#define TILE_SIZE 100 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
+#define WIDTH 600 // x
+#define HEIGHT 400 // y
+#define TILE_SIZE 30 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
 #define FOV 60
 
 typedef struct s_data_player
@@ -67,6 +67,11 @@ typedef struct s_data
 	t_data_player	data_player;
 	t_rays			cast_rays;
 	char 			**map;
+	int				map_x;
+	int				map_y;
+	int				fish_eye;
+	int				size_x;
+	int				size_y;
 
 }	t_data;
 
