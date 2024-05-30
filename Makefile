@@ -16,7 +16,7 @@ CC		=	gcc
 
 FLAGS	=	-Wall -Wextra -Werror -MMD -g -fsanitize=address
 
-MLX_F	=	-Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
+MLX_F	=	-O3 -ffast-math -Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
 
 SRC		=	main.c draw.c render.c movement.c
 
