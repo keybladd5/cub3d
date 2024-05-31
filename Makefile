@@ -18,9 +18,7 @@ FLAGS	=	-Wall -Wextra -Werror -MMD -g -fsanitize=address
 
 MLX_F	=	-O3 -ffast-math -Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
 
-SRC		=	main.c draw.c render.c movement.c
-
-#SRC		=	demo.c
+SRC	=	main.c draw.c render.c movement.c
 
 OBJ		=	$(SRC:.c=.o)
 
@@ -41,13 +39,21 @@ YELLOW		=	\033[38;5;190m
 all		:	makelib $(NAME)
 
 $(NAME)	:	$(OBJ)
-		$(CC) $(FLAGS) libft/libft.a MLX42/build/libmlx42.a $(MLX_F) $(OBJ) -o $(NAME)
+		@$(CC) $(FLAGS) libft/libft.a MLX42/build/libmlx42.a $(MLX_F) $(OBJ) -o $(NAME)
+		@echo "${PURPLE}Cub3d Compiled${NC}"
 
 %.o		:	%.c Makefile MLX42/build/libmlx42.a libft/libft.a cub3d.h
-		$(CC) $(FLAGS) -c $< -o $@
+		@$(CC) $(FLAGS) -c $< -o $@
 
 makelib	:
-		$(MAKE) -C MLX42/build/
+		@echo "${BLUE}Compiling MLX42...${NC}"
+		@$(MAKE) -C MLX42/build/ & pid=$$!; \
+		echo "."; \
+		while ps -p $$pid > /dev/null; do \
+			sleep 1; \
+			echo "."; \
+		done;
+		@echo "${GREEN}MLX42 Compiled${NC}"
 		@echo "${BLUE}Compiling Libft...${NC}"
 		@$(MAKE) -j -C libft/ & pid=$$!; \
 		echo "."; \
@@ -58,11 +64,12 @@ makelib	:
 		@echo "${GREEN}Libft Compiled${NC}"
 
 clean	:
-		rm -rf $(OBJ) $(DEPS)
+		@echo "${RED}Deleting objects and dependencies ${NC}"
+		@rm -rf $(OBJ) $(DEPS)
 		@$(MAKE) -j -C libft/ clean
 
 fclean	:	clean
-		$(MAKE) -C MLX42/build clean
+		@$(MAKE) -C MLX42/build clean -j
 		@$(MAKE) -j -C libft/ fclean
 		rm -f $(NAME)
 
