@@ -12,6 +12,12 @@
 
 #include "cub3d.h"
 
+//implementar las variables inversas sobre las que se va a divir puede ayudar a optimizar el codigo
+//ejemplo -> M_PI / 180.0 == M_PI * (VARIABLE QUE CONTIENE RESULTADO DE 1.0 / 180.0), si se almacena la variable solo se divide una vez y optimizas 
+//sustituyendo las divisiones por el mismo numero con la variable inversa al numero. Da una exactitud de output del 100%
+//Parece logico pensar que es mejor multiplicar M_PI * 0.180 , pero el output es diferente a nivel de decimales, es noatble esta diferencia para los
+//calculos del render?
+
 double nor_angle(double angle) // normalize the angle
 {
 	if (angle < 0)
@@ -31,58 +37,32 @@ int collider_checker(t_data *d, double y, double x)
 		return (0);
 	x_m = floor(x  / TILE_SIZE); // get the x position in the map
 	y_m = floor(y  / TILE_SIZE); // get the y position in the map
-	//printf("%d, %d \n",d->size_y, d->size_x);
 	if (y_m  >= d->size_y || x_m >= d->size_x) //cambiado por tamaño mapa
 		return (0);
-	if (d->map[y_m] && x_m <= (int)strlen(d->map[y_m]))
+	if (x_m < 0 || y_m < 0)//added to save bus or segfault errors
+		return (0);
+	if (d->map[y_m] && x_m <= (int)ft_strlen(d->map[y_m]))
 		if (d->map[y_m][x_m] == '1')
 			return (0);
 	return (1);
 }
 
-int	unit_circle(double angle, char c)	// check the unit circle
+//set the south and west with angle
+void	check_side(t_data *d, double angle)	// check the unit circle
 {
-	if (c == 'x')
-	{
-		if (angle > 0 && angle < M_PI)
-			return (1); //d->data_player.south = true;
-		//else
-			////d->data_player.south = false;
-	}
-	else if (c == 'y')
-	{
-		if (angle > (M_PI / 2) && angle < (3 * M_PI) / 2)
-			return (1); //d->data_player.west = true;
-		//else
-			//d->data_player.west = false;
-	}
-	return (0);
-}
-
-int	inter_check(double angle, double *inter, double *step, int is_horizon)	// check the intersection
-{
-	if (is_horizon)
-	{
-		if (angle > 0 && angle < M_PI)
-		{
-			*inter += TILE_SIZE;
-			return (-1);
-		}
-		*step *= -1;
-	}
+	if (angle > 0 && angle < M_PI)
+		d->data_player.south = true;
 	else
-	{
-		if (!(angle > M_PI / 2 && angle < 3 * M_PI / 2)) 
-		{
-			*inter += TILE_SIZE;
-			return (-1);
-		}
-		*step *= -1;
-	}
-	return (1);
+		d->data_player.south = false;
+
+	if (angle > (M_PI / 2) && angle < (3 * M_PI) / 2)
+		d->data_player.west = true;
+	else
+		d->data_player.west = false;
 }
 
-double	get_h_inter(t_data *d, double angl)	// get the horizontal intersection
+// get the horizontal intersection
+double	get_h_inter(t_data *d, double angl)
 {
 	double	h_x;
 	double	h_y;
@@ -93,9 +73,19 @@ double	get_h_inter(t_data *d, double angl)	// get the horizontal intersection
 	y_step = TILE_SIZE;
 	x_step = TILE_SIZE / tan(angl);
 	h_y = floor(d->data_player.y / TILE_SIZE) * TILE_SIZE;
-	pixel = inter_check(angl, &h_y, &y_step, 1);
+	check_side(d, nor_angle(angl));
+	if (d->data_player.south == true)
+	{
+		h_y += TILE_SIZE;
+		pixel = -1;
+	}
+	else
+	{
+		pixel = 1;
+		y_step *= -1;
+	}
 	h_x = d->data_player.x + (h_y - d->data_player.y) / tan(angl);
-	if ((unit_circle(angl, 'y') && x_step > 0) || (!unit_circle(angl, 'y') && x_step < 0)) // check x_step value
+	if ((d->data_player.west == true && x_step > 0) || (d->data_player.west == false && x_step < 0)) // check x_step value
 		x_step *= -1;
 	while (collider_checker(d, h_y - pixel, h_x)) // check the wall hit whit the pixel value
 	{
@@ -105,7 +95,8 @@ double	get_h_inter(t_data *d, double angl)	// get the horizontal intersection
 	return (sqrt(pow(h_x - d->data_player.x, 2) + pow(h_y - d->data_player.y, 2))); // get the distance
 }
 
-double	get_v_inter(t_data *d, double angl)	// get the vertical intersection
+// get the vertical intersection
+double	get_v_inter(t_data *d, double angl)
 {
 	double	v_x;
 	double	v_y;
@@ -116,9 +107,19 @@ double	get_v_inter(t_data *d, double angl)	// get the vertical intersection
 	x_step = TILE_SIZE; 
 	y_step = TILE_SIZE * tan(angl);
 	v_x = floor(d->data_player.x / TILE_SIZE) * TILE_SIZE;
-	pixel = inter_check(angl, &v_x, &x_step, 0); // check the intersection and get the pixel value
+	check_side(d, nor_angle(angl));
+	if (d->data_player.west == false)
+	{
+		v_x += TILE_SIZE;
+		pixel = -1;
+	}
+	else
+	{
+		pixel = 1;
+		x_step *= -1;
+	}
 	v_y = d->data_player.y + (v_x - d->data_player.x ) * tan(angl);
-	if ((unit_circle(angl, 'x') && y_step < 0) || (!unit_circle(angl, 'x') && y_step > 0)) // check y_step value
+	if ((d->data_player.south == true && y_step < 0) || (d->data_player.south == false && y_step > 0)) // check y_step value
 		y_step *= -1;
 	while (collider_checker(d, v_y, v_x - pixel)) // check the wall hit whit the pixel value
 	{
@@ -134,8 +135,8 @@ void render_walls(t_data *d, int ray)
 	double	b_pix;
 	double	t_pix;
 
-	if (!d->fish_eye)
-		d->cast_rays.distance *= cos(nor_angle(d->cast_rays.ray_ngl - d->data_player.angle_rotation));//corect fish eye
+
+	d->cast_rays.distance *= cos(nor_angle(d->cast_rays.ray_ngl - d->data_player.angle_rotation));//corect fish eye
 	wall_h = (TILE_SIZE / d->cast_rays.distance) * ((WIDTH / 2) / tan(d->data_player.fov_radians / 2));
 	b_pix = (HEIGHT / 2) + (wall_h / 2);
 	t_pix = (HEIGHT / 2) - (wall_h / 2);
@@ -156,7 +157,6 @@ void ft_cast_rays(t_data *d)
 	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
 	while (ray < WIDTH)
 	{
-		//printf("ray #%d, ray_ngl: %f\n", ray, d->cast_rays.ray_ngl);
 		d->cast_rays.flag = 0;
 		x_collision = get_h_inter(d, nor_angle(d->cast_rays.ray_ngl));
 		y_collision = get_v_inter(d, nor_angle(d->cast_rays.ray_ngl));

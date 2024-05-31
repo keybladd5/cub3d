@@ -12,6 +12,13 @@
 
 #include "cub3d.h"
 
+//print mlx errors on std_error and set exit_status on 1;
+void ft_mlx_error(void)
+{
+	ft_putendl_fd((char *)mlx_strerror(mlx_errno), 2);
+	exit(EXIT_FAILURE);
+}
+
 //libera el mapa
 void ft_free_map(char **map)
 {
@@ -27,7 +34,9 @@ void ft_free_map(char **map)
 	printf("%p\n", map);
 	free(map);
 }
-void ft_read_map(t_data *d, char **map)
+
+//get the size_x and size_y
+void ft_get_size_map(t_data *d, char **map)
 {
 	int y;
 	int x;
@@ -51,14 +60,28 @@ void ft_read_map(t_data *d, char **map)
 	}
 	d->size_y = y;
 }
+//parte para añadir un asset que represente al player, pero lo carga con transparencia 
+/*void ft_load_texture_beta(t_data *d)
+{
+	mlx_delete_image(d->mlx, d->test);
+	d->test =  mlx_texture_to_image(d->mlx, d->tex);
+	if (!d->test)
+		error();
+	mlx_image_to_window(d->mlx, d->test, (WIDTH / 2) - 150, (3 * HEIGHT) / 4);
+	mlx_set_instance_depth(d->test->instances, 0xFF);
+}*/
 void ft_game_loop(void *param)
 {
 	t_data *d = param;
 	mlx_delete_image(d->mlx, d->image);
 	d->image = mlx_new_image(d->mlx, WIDTH, HEIGHT);
+	if (!d->image)
+		ft_mlx_error();
 	ft_cast_rays(d);
 	ft_movement_hook(d);
 	mlx_image_to_window(d->mlx, d->image, 0, 0);
+	//parte para añadir un asset que represente al player, pero lo carga con transparencia 
+	//ft_load_texture_beta(d);
 }
 
 int main(void)
@@ -66,24 +89,20 @@ int main(void)
 	t_data	d;
 
 	d.map = ft_calloc(8, sizeof(char *)); // init the map
-	d.map[0] = ft_strdup("11111111"); //fill the map
-	d.map[1] = ft_strdup("10010001");
-	d.map[2] = ft_strdup("10010001");
-	d.map[3] = ft_strdup("100P0001");
-	d.map[4] = ft_strdup("10010001");
-	d.map[5] = ft_strdup("11111111");
+	d.map[0] = ft_strdup("11111111111"); //fill the map
+	d.map[1] = ft_strdup("10010000001");
+	d.map[2] = ft_strdup("10010000001");
+	d.map[3] = ft_strdup("100P0001001");
+	d.map[4] = ft_strdup("10010000001");
+	d.map[4] = ft_strdup("10010000001");
+	d.map[5] = ft_strdup("11111111111");
 	d.map[6] = NULL;
-	//he añadido una serie de datos relevantes al player, que necesito pasar por referencia
-	//sin mallocs
-	ft_read_map(&d, d.map);
-	//d.map_x = 2;
-	//d.map_y = 2;
-	d.fish_eye = 0;
+	ft_get_size_map(&d, d.map);
 	d.data_player.advance = 0;
 	d.data_player.turn_on =  0;
 	d.data_player.angle_rotation = 0.0;
-	d.data_player.speed_advance = 5.0;
-	d.data_player.speed_turn_on = 3.0 * (M_PI / 180.0);
+	d.data_player.speed_advance = 3.0;
+	d.data_player.speed_turn_on = 3.5 * (M_PI / 180.0);
 	d.data_player.x = d.map_x * TILE_SIZE + TILE_SIZE / 2;
 	d.data_player.y = d.map_x * TILE_SIZE + TILE_SIZE / 2;
 	d.data_player.fov_radians = (FOV * M_PI) / 180;
@@ -102,6 +121,13 @@ int main(void)
 	d.image = mlx_new_image(d.mlx, WIDTH, HEIGHT);
 	ft_cast_rays(&d);
 	mlx_image_to_window(d.mlx, d.image, 0, 0);
+	//parte para añadir un asset que represente al player, pero lo carga con transparencia 
+	/*d.tex = mlx_load_png("test.png");
+	//si la ima
+	if (!d.tex)
+		error();
+	d.test =  mlx_texture_to_image(d.mlx, d.tex);
+	mlx_image_to_window(d.mlx, d.test,  (WIDTH / 2) - 150, (3 * HEIGHT) / 4);*/
 
 	//hooks a eventos 
 	mlx_loop_hook(d.mlx, ft_game_loop, &d);
