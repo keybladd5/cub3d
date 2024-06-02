@@ -18,6 +18,9 @@
 //Parece logico pensar que es mejor multiplicar M_PI * 0.180 , pero el output es diferente a nivel de decimales, es noatble esta diferencia para los
 //calculos del render?
 
+/*Normalizes an angle to ensure that it is always in the range 0 to 2π radians. 
+If the angle is negative, 2π is added. 
+If the angle is greater than 2π, 2π is subtracted.*/
 double nor_angle(double angle) // normalize the angle
 {
 	if (angle < 0)
@@ -27,7 +30,9 @@ double nor_angle(double angle) // normalize the angle
 	return (angle);
 }
 
-//Si hay error de calculo, o impacto retorna 0, sino hay impacto retorna 1
+/*Checks if a specific position on the map is free of collisions. 
+If the coordinates (x, y) are out of bounds or if the map cell contains
+ a '1' (indicating a wall), it returns 0. Otherwise, it returns 1*/
 int collider_checker(t_data *d, double y, double x)
 {
 	int		x_m;
@@ -47,8 +52,10 @@ int collider_checker(t_data *d, double y, double x)
 	return (1);
 }
 
-//set the south and west with angle
-void	check_side(t_data *d, double angle)	// check the unit circle
+/*Determines whether the angle points south and/or west and updates 
+the corresponding boolean values 
+​​in d->data_player.south and d->data_player.west.*/
+void	check_side(t_data *d, double angle)	
 {
 	if (angle > 0 && angle < M_PI)
 		d->data_player.south = true;
@@ -61,7 +68,21 @@ void	check_side(t_data *d, double angle)	// check the unit circle
 		d->data_player.west = false;
 }
 
-// get the horizontal intersection
+int	reverse_bytes(int c)
+{
+	unsigned int	b;
+
+	b = 0;
+	b |= (c & 0xFF) << 24;
+	b |= (c & 0xFF00) << 8;
+	b |= (c & 0xFF0000) >> 8;
+	b |= (c & 0xFF000000) >> 24;
+	return (b);
+}
+
+/*Calculates the closest horizontal intersection of a ray 
+launched from the player's position at a given angle.
+ Returns the distance from the player to the intersection.*/
 double	get_h_inter(t_data *d, double angl)
 {
 	double	h_x;
@@ -92,10 +113,14 @@ double	get_h_inter(t_data *d, double angl)
 		h_x += x_step;
 		h_y += y_step;
 	}
+	d->cast_rays.wall_hit_x_horizontal = h_x;
+	d->cast_rays.wall_hit_y_horizontal = h_y;
 	return (sqrt(pow(h_x - d->data_player.x, 2) + pow(h_y - d->data_player.y, 2))); // get the distance
 }
 
-// get the vertical intersection
+/*Calculates the closest vertical intersection of a ray 
+launched from the player's position at a given angle.
+ Returns the distance from the player to the intersection.*/
 double	get_v_inter(t_data *d, double angl)
 {
 	double	v_x;
@@ -126,9 +151,15 @@ double	get_v_inter(t_data *d, double angl)
 		v_x += x_step;
 		v_y += y_step;
 	}
+	d->cast_rays.wall_hit_x_vertical = v_x;
+	d->cast_rays.wall_hit_y_vertical = v_y;
 	return (sqrt(pow(v_x - d->data_player.x, 2) + pow(v_y - d->data_player.y, 2)));
 }
 
+/*renders the walls on the screen correcting fisheye distortion. 
+Calculate the height of the wall and the start and end pixels 
+to draw on the screen, then call the functions that draw the wall, 
+the floor and the ceiling.*/
 void render_walls(t_data *d, int ray)
 {
 	double	wall_h;
@@ -144,10 +175,14 @@ void render_walls(t_data *d, int ray)
 		b_pix = HEIGHT;
 	if (t_pix < 0) // check the top pixel
 		t_pix = 0;
-	draw_wall(d, ray, t_pix, b_pix); // draw the wall
+	d->cast_rays.index = ray;
+	draw_wall_texture(d, t_pix, b_pix, wall_h); // draw the wall
 	draw_floor_ceiling(d, ray, t_pix, b_pix); // draw the floor and the ceiling
 }
-
+/*Launches rays from the player's position at various angles 
+within the field of vision. Calculate the intersections 
+nearest horizontals and verticals for each ray, 
+determines which one is closest and renders the walls on the screen.*/
 void ft_cast_rays(t_data *d)
 {
 	double x_collision;

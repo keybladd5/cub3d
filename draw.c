@@ -31,25 +31,24 @@ void safe_pixel_put(mlx_image_t *image, int x, int y, int color)
 		return ;
 	mlx_put_pixel(image, x, y, color); // put the pixel
 }
-int color_walls(t_data *d, int flag)
+mlx_texture_t *get_texture_walls(t_data *d, int flag)
 {
-	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
 	if (flag == 0) //east and west
 	{
-		if (d->cast_rays.ray_ngl > M_PI / 2 && d->cast_rays.ray_ngl < 3 * (M_PI / 2))
-			return (get_rgba(164, 13, 13, 175));// west wall
+		if (d->data_player.west == true)
+			return (d->tex.we);// west wall
 		else
-			return  (get_rgba(120, 10, 10, 175));// east wall
+			return  (d->tex.ea);// east wall
 	}
-	else
+	else//south and north
 	{
-		if (d->cast_rays.ray_ngl > 0 && d->cast_rays.ray_ngl < M_PI)
-			return (get_rgba(236, 36, 36, 175));// south wall
+		if (d->data_player.south == true)
+			return (d->tex.so);// south wall
 		else
-			return (get_rgba(240, 105, 105, 175));// north wall
+			return (d->tex.no);// north wall
 	}
 }
-void	draw_wall(t_data *d, int ray, int t_pix, int b_pix)	// draw the wall
+/*void	draw_wall(t_data *d, int ray, int t_pix, int b_pix)	// draw the wall
 {
 	int color;
 
@@ -60,6 +59,45 @@ void	draw_wall(t_data *d, int ray, int t_pix, int b_pix)	// draw the wall
 			safe_pixel_put(d->image, ray, t_pix++, get_rgba(0, 0, 0, 255));
 		else
 			safe_pixel_put(d->image, ray, t_pix++, color);
+	}
+}*/
+double	get_x_o(mlx_texture_t	*texture, t_data *d)
+{
+	double	x_o;
+
+	if (d->cast_rays.flag == 1)
+		x_o = (int)fmodf((d->cast_rays.wall_hit_x_horizontal * \
+		(texture->width / TILE_SIZE)), texture->width);
+	else
+		x_o = (int)fmodf((d->cast_rays.wall_hit_y_vertical * \
+		(texture->width / TILE_SIZE)), texture->width);
+	return (x_o);
+}
+void	draw_wall_texture(t_data *d, int t_pix, int b_pix, double wall_h)
+{
+	double			x_o;
+	double			y_o;
+	mlx_texture_t	*texture;
+	unsigned int	*arr;
+	double			factor;
+
+	//check_side(d, nor_angle(d->data_player.angle_rotation));
+	texture = get_texture_walls(d, d->cast_rays.flag);
+	arr = (unsigned int *)texture->pixels;
+	factor = (double)texture->height / wall_h;
+	//x_o = get_x_o(texture, d);
+	if (d->cast_rays.flag == 1)
+		x_o = (int)fmodf((d->cast_rays.wall_hit_x_horizontal * (texture->width / TILE_SIZE)), texture->width);
+	else
+		x_o = (int)fmodf((d->cast_rays.wall_hit_y_vertical * (texture->width / TILE_SIZE)), texture->width);
+	y_o = (t_pix - (HEIGHT / 2) + (wall_h / 2)) * factor;
+	if (y_o < 0)
+		y_o = 0;
+	while (t_pix < b_pix)
+	{
+		safe_pixel_put(d->image, d->cast_rays.index, t_pix, reverse_bytes(arr[(int)y_o * texture->width + (int)x_o]));
+		y_o += factor;
+		t_pix++;
 	}
 }
 

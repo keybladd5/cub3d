@@ -106,6 +106,22 @@ int main(void)
 	d.data_player.x = d.map_x * TILE_SIZE + TILE_SIZE / 2;
 	d.data_player.y = d.map_x * TILE_SIZE + TILE_SIZE / 2;
 	d.data_player.fov_radians = (FOV * M_PI) / 180;
+	//d.tex.ea = malloc(sizeof(mlx_texture_t));
+	d.tex.ea = mlx_load_png("./assets/ea.png");
+	if(!d.tex.ea)
+		ft_mlx_error();
+	//d.tex.no = malloc(sizeof(mlx_texture_t));
+	d.tex.no = mlx_load_png("./assets/no.png");
+	if(!d.tex.no)
+		ft_mlx_error();
+	//d.tex.so = malloc(sizeof(mlx_texture_t));
+	d.tex.so = mlx_load_png("./assets/so.png");
+	if(!d.tex.so)
+		ft_mlx_error();
+	//d.tex.we = malloc(sizeof(mlx_texture_t));
+	d.tex.we = mlx_load_png("./assets/we.png");
+	if(!d.tex.we)
+		ft_mlx_error();
 
 	
 	//nuevas variables añadidas para los rayos
