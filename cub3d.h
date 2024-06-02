@@ -22,9 +22,9 @@
 
 #define WIDTH 1900 // x
 #define HEIGHT 950 // y
-#define TILE_SIZE 50 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
+#define TILE_SIZE 64 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
 #define LATERAL_RADIANS 1.570796326794897
-#define FOV 80
+#define FOV 60
 
 typedef struct s_data_player
 {
@@ -43,9 +43,8 @@ typedef struct s_data_player
 
 typedef struct s_rays
 {
-	int next_y; //no asignada aun
-	int next_x; //no asignada aun
-	int flag;
+	int flag;//if horizontal collision is the lower 1, else 0
+	int index;
 	double wall_hit_x_horizontal;
 	double wall_hit_y_horizontal;
 	double wall_hit_x_vertical;
@@ -57,14 +56,21 @@ typedef struct s_rays
 
 }	t_rays;
 
+typedef struct s_textures
+{
+	mlx_texture_t	*no;
+	mlx_texture_t	*so;
+	mlx_texture_t	*we;
+	mlx_texture_t	*ea;
+}	t_textures;
+
 typedef struct s_data
 {
 	mlx_t* mlx;
-	mlx_texture_t	*tex;
 	mlx_image_t		*image;
-	mlx_image_t		*test;
 	t_data_player	data_player;
 	t_rays			cast_rays;
+	t_textures		tex;
 	char 			**map;
 	int				map_x;
 	int				map_y;
@@ -83,9 +89,9 @@ double	nor_angle(double angle);
 
 void	draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix);
 
-void	draw_wall(t_data *d, int ray, int t_pix, int b_pix);
-
 int		color_walls(t_data *d, int flag);
+
+mlx_texture_t *get_texture_walls(t_data *d, int flag);
 
 void	render_walls(t_data *d, int ray);
 
@@ -106,3 +112,7 @@ void	check_side(t_data *d, double angle);
 void	ft_get_size_map(t_data *d, char **map);
 
 void	ft_mlx_error(void);
+
+void	draw_wall_texture(t_data *d, int t_pix, int b_pix, double wall_h);
+
+int	reverse_bytes(int c);
