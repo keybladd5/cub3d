@@ -20,6 +20,15 @@
 #include <unistd.h>
 #include "libft/libft.h"
 
-#define WIDTH 800 // x
-#define HEIGHT 600 // y
-#define TILE_SIZE 100 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
+#define WIDTH 1600 // x
+#define HEIGHT 1200 // y
+#define TILE_SIZE 64 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
+
+typedef struct s_data
+{
+    mlx_t   *mlx;
+    char    **map;
+}   t_data;
+
+
+int ft_parse_input(int argc, char **argv, t_data *d);
