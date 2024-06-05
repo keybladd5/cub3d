@@ -93,7 +93,7 @@ void	draw_wall_texture(t_data *d, int t_pix, int b_pix, double wall_h)
 	y_o = (t_pix - (HEIGHT / 2) + (wall_h / 2)) * factor;
 	if (y_o < 0)
 		y_o = 0;
-	while (t_pix < b_pix)
+	while (t_pix < b_pix)//aqui peta
 	{
 		safe_pixel_put(d->image, d->cast_rays.index, t_pix, reverse_bytes(arr[(int)y_o * texture->width + (int)x_o]));
 		y_o += factor;
