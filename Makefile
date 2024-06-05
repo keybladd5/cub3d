@@ -14,9 +14,13 @@ NAME	=	cub3d
 
 CC		=	gcc
 
-FLAGS	=	-Wall -Wextra -Werror -MMD -g0 #-fsanitize=address
+#M_FLAGS	=	-Wall -Wextra -Werror -MMD -g0 #-fsanitize=address
 
-MLX_F	=	-O3 -ffast-math -Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
+#M_MLX_F	=	-O3 -ffast-math -Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
+
+L_FLAGS =	-Wall -Wextra -Werror -MMD -g
+
+#L_MLX_F =	-ldl -lglfw -lm
 
 SRC	=	main.c draw.c render.c movement.c
 
@@ -24,9 +28,19 @@ OBJ		=	$(SRC:.c=.o)
 
 DEPS	=	$(SRC:.c=.d)
 
+MINILIBX_FOLDER ?= MLX42
+MINILIBX_FILE ?= $(MINILIBX_FOLDER)/libmlx42.a
+INCLUDE := include libft/include $(MINILIBX_FOLDER)/include
+INCLUDE := $(addprefix -I,$(INCLUDE))
+
+# This should allow compilation on linux (no windows support)
+
+MLX_FLAGS := -ldl -lglfw -lm
+
 LIBFT_ROOT	:= libft/
 
 LIB_A		:= $(LIBFT_ROOT)libft.a
+HEADERS			:= $(MLX_H) cub3d.h libft/libft.h
 
 #COLORES
 GREEN		=	\033[38;5;154m
@@ -38,21 +52,16 @@ YELLOW		=	\033[38;5;190m
 
 all		:	makelib $(NAME)
 
-$(NAME)	:	$(OBJ)
-		@$(CC) $(FLAGS) libft/libft.a MLX42/build/libmlx42.a $(MLX_F) $(OBJ) -o $(NAME)
+$(NAME)	:	MLX42/build/libmlx42.a $(OBJ)
+		@$(CC) $(L_FLAGS) $(OBJ) libft/libft.a MLX42/build/libmlx42.a -o $(NAME) $(MLX_FLAGS)
 		@echo "${PURPLE}Cub3d Compiled${NC}"
 
 %.o		:	%.c Makefile MLX42/build/libmlx42.a libft/libft.a cub3d.h
-		@$(CC) $(FLAGS) -c $< -o $@
+		@$(CC) $(L_FLAGS) $(INCLUDE) -c $< -o $@
 
 makelib	:
 		@echo "${BLUE}Compiling MLX42...${NC}"
-		@$(MAKE) -C MLX42/build/ & pid=$$!; \
-		echo "."; \
-		while ps -p $$pid > /dev/null; do \
-			sleep 1; \
-			echo "."; \
-		done;
+		make -C MLX42/build -j4
 		@echo "${GREEN}MLX42 Compiled${NC}"
 		@echo "${BLUE}Compiling Libft...${NC}"
 		@$(MAKE) -j -C libft/ & pid=$$!; \

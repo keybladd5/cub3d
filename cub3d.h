@@ -17,6 +17,7 @@
 #include <math.h>
 #include <limits.h>
 #include "MLX42/include/MLX42/MLX42.h"
+#include "MLX42/include/MLX42/MLX42.h"
 #include <unistd.h>
 #include "libft/libft.h"
 
