@@ -14,33 +14,19 @@ NAME	=	cub3d
 
 CC		=	gcc
 
-#M_FLAGS	=	-Wall -Wextra -Werror -MMD -g0 #-fsanitize=address
+FLAGS	=	-Wall -Wextra -Werror -MMD -g -fsanitize=address
 
-#M_MLX_F	=	-O3 -ffast-math -Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
+MLX_F	=	-Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
 
-L_FLAGS =	-Wall -Wextra -Werror -MMD -g  #-fsanitize=address
-
-#L_MLX_F =	-ldl -lglfw -lm
-
-SRC	=	main.c parse.c
+SRC		=	main.c parse.c
 
 OBJ		=	$(SRC:.c=.o)
 
 DEPS	=	$(SRC:.c=.d)
 
-MINILIBX_FOLDER ?= MLX42
-MINILIBX_FILE ?= $(MINILIBX_FOLDER)/libmlx42.a
-INCLUDE := include libft/include $(MINILIBX_FOLDER)/include
-INCLUDE := $(addprefix -I,$(INCLUDE))
-
-# This should allow compilation on linux (no windows support)
-
-MLX_FLAGS := -ldl -lglfw -lm
-
 LIBFT_ROOT	:= libft/
 
 LIB_A		:= $(LIBFT_ROOT)libft.a
-HEADERS			:= $(MLX_H) cub3d.h libft/libft.h
 
 #COLORES
 GREEN		=	\033[38;5;154m
@@ -52,17 +38,14 @@ YELLOW		=	\033[38;5;190m
 
 all		:	makelib $(NAME)
 
-$(NAME)	:	MLX42/build/libmlx42.a $(OBJ)
-		@$(CC) $(L_FLAGS) $(OBJ) libft/libft.a MLX42/build/libmlx42.a -o $(NAME) $(MLX_FLAGS)
-		@echo "${PURPLE}Cub3d Compiled${NC}"
+$(NAME)	:	$(OBJ)
+		$(CC) $(FLAGS) libft/libft.a MLX42/build/libmlx42.a $(MLX_F) $(OBJ) -o $(NAME)
 
 %.o		:	%.c Makefile MLX42/build/libmlx42.a libft/libft.a cub3d.h
-		@$(CC) $(L_FLAGS) $(INCLUDE) -c $< -o $@
+		$(CC) $(FLAGS) -c $< -o $@
 
 makelib	:
-		@echo "${BLUE}Compiling MLX42...${NC}"
-		make -C MLX42/build -j4
-		@echo "${GREEN}MLX42 Compiled${NC}"
+		$(MAKE) -C MLX42/build/
 		@echo "${BLUE}Compiling Libft...${NC}"
 		@$(MAKE) -j -C libft/ & pid=$$!; \
 		echo "."; \
@@ -73,12 +56,11 @@ makelib	:
 		@echo "${GREEN}Libft Compiled${NC}"
 
 clean	:
-		@echo "${RED}Deleting objects and dependencies ${NC}"
-		@rm -rf $(OBJ) $(DEPS)
+		rm -rf $(OBJ) $(DEPS)
 		@$(MAKE) -j -C libft/ clean
 
 fclean	:	clean
-		@$(MAKE) -C MLX42/build clean -j
+		$(MAKE) -C MLX42/build clean
 		@$(MAKE) -j -C libft/ fclean
 		rm -f $(NAME)
 

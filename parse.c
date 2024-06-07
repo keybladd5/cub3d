@@ -15,7 +15,7 @@ void    ft_load_mapdata(t_data *d, char *line)
 {
     mlx_texture_t   *p_tex;
 
-    while ((*line == ' ' || (*line >= 9 && *line <= 13)))
+    while (ft_isspace(*line) && *line != "\n")
 		line++;
     if (!ft_strncmp(line, "NO", 2))
         p_tex = d->no;
@@ -25,8 +25,15 @@ void    ft_load_mapdata(t_data *d, char *line)
         p_tex = d->we;
     else if (!ft_strncmp(line, "EA", 2))
         p_tex = d->ea;
-    
-
+	/*
+    else if (!ft_strncmp(line, "F", 1))
+    else if (!ft_strncmp(line, "C", 1))
+    */
+	line += 2;
+	while (ft_isspace(*line) && *line != "\n")
+		line++;
+	line[ft_strlen(line - 1)] = '\0';
+	*p_tex = mlx_load_png(line);
 }
 
 int ft_parse_input(int argc, char **argv, t_data *d)
@@ -51,13 +58,11 @@ int ft_parse_input(int argc, char **argv, t_data *d)
     char    *line = get_next_line(scenefd);
     while (line && line[0] != '1' && line[0] != '0') //if a line begins with 0 or 1 means it's the map (always last element)
     {
-        ft_load_mapdata(d, line);
-        
-        
+        if (line[0] != "\n")
+			ft_load_mapdata(d, line);
+        free(line);
+		get_next_line(scenefd);        
     }
-
-
-
 
     return (0);
 }
