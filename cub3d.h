@@ -27,7 +27,14 @@
 typedef struct s_data
 {
     mlx_t   *mlx;
+
+    mlx_texture_t	*no;
+	mlx_texture_t	*so;
+	mlx_texture_t	*we;
+	mlx_texture_t	*ea;
+
     char    **map;
+
 }   t_data;
 
 
