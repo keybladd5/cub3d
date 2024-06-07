@@ -87,15 +87,18 @@ void	draw_wall_texture(t_data *d, int t_pix, int b_pix, double wall_h)
 	factor = (double)texture->height / wall_h;
 	//x_o = get_x_o(texture, d);
 	if (d->cast_rays.flag == 1)
-		x_o = (int)fmodf((d->cast_rays.wall_hit_x_horizontal * (texture->width / TILE_SIZE)), texture->width);
+		x_o = (uint32_t)fmodf((d->cast_rays.wall_hit_x_horizontal * (texture->width / TILE_SIZE)), texture->width);
 	else
-		x_o = (int)fmodf((d->cast_rays.wall_hit_y_vertical * (texture->width / TILE_SIZE)), texture->width);
+		x_o = (uint32_t)fmodf((d->cast_rays.wall_hit_y_vertical * (texture->width / TILE_SIZE)), texture->width);
 	y_o = (t_pix - (HEIGHT / 2) + (wall_h / 2)) * factor;
 	if (y_o < 0)
 		y_o = 0;
 	while (t_pix < b_pix)
 	{
-		safe_pixel_put(d->image, d->cast_rays.index, t_pix, reverse_bytes(arr[(int)y_o * texture->width + (int)x_o]));
+		if ((uint32_t)y_o < texture->height && (uint32_t)x_o < texture->width)
+        {
+            safe_pixel_put(d->image, d->cast_rays.index, t_pix, reverse_bytes(arr[(int)y_o * texture->width + (int)x_o]));
+        }
 		y_o += factor;
 		t_pix++;
 	}

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
+#include <math.h>
 
 //print mlx errors on std_error and set exit_status on 1;
 void ft_mlx_error(void)

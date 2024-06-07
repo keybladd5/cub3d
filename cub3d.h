@@ -21,11 +21,12 @@
 #include <unistd.h>
 #include "libft/libft.h"
 
-#define WIDTH 1900 // x
-#define HEIGHT 950 // y
-#define TILE_SIZE 64 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
-#define LATERAL_RADIANS 1.570796326794897
-#define FOV 60
+# define WIDTH 1900 // x
+# define HEIGHT 950 // y
+# define TILE_SIZE 64 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
+# define LATERAL_RADIANS 1.570796326794897
+# define FOV 60
+# define M_PI		3.14159265358979323846	/* pi */
 
 typedef struct s_data_player
 {

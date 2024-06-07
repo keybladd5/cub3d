@@ -29,6 +29,10 @@ void ft_movement_hook(void *param)
 		d->data_player.turn_on = 1;
 	if (mlx_is_key_down(d->mlx, MLX_KEY_A) == true)
 		d->data_player.turn_on = -1;
+	//if (mlx_is_key_down(d->mlx, MLX_KEY_RIGHT) == true)
+		//funcion que que setea una flag que indica(resta 90 grados) y pone advance en +1
+	//if (mlx_is_key_down(d->mlx, MLX_KEY_LEFT) == true)
+		//funcion que que setea una flag que indica(suma 90 grados) y pone advance en +1
 	d->data_player.angle_rotation += (d->data_player.turn_on * d->data_player.speed_turn_on);
 	d->data_player.angle_rotation = nor_angle(d->data_player.angle_rotation);
  	//parte para añadir el desplazamiento lateral pero no funciona bien, ademas pendiente incorporar el collider antes de desplazar
