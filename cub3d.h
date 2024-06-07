@@ -28,10 +28,13 @@ typedef struct s_data
 {
     mlx_t   *mlx;
 
-    mlx_texture_t	*no;
-	mlx_texture_t	*so;
-	mlx_texture_t	*we;
-	mlx_texture_t	*ea;
+    mlx_texture_t	**no;
+	mlx_texture_t	**so;
+	mlx_texture_t	**we;
+	mlx_texture_t	**ea;
+
+    int *f_color;
+    int *c_color;
 
     char    **map;
 
@@ -39,3 +42,5 @@ typedef struct s_data
 
 
 int ft_parse_input(int argc, char **argv, t_data *d);
+
+int get_rgba(int r, int g, int b, int a);

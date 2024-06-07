@@ -11,35 +11,66 @@ int ft_wrong_file(char *scene)
     return (1);
 }
 
-void    ft_load_mapdata(t_data *d, char *line)
+void	ft_load_texture(t_data *d, char *line)
 {
-    mlx_texture_t   **p_tex = NULL;
+	mlx_texture_t   **p_tex;
 
-    while (ft_isspace(*line) && *line != '\n')
-		line++;
-    if (!ft_strncmp(line, "NO", 2))
-		*p_tex = d->no;
+	if (!ft_strncmp(line, "NO", 2))
+		p_tex = d->no;
     else if (!ft_strncmp(line, "SO", 2))
-        *p_tex = d->so;
+        p_tex = d->so;
     else if (!ft_strncmp(line, "WE", 2))
-        *p_tex = d->we;
+        p_tex = d->we;
     else if (!ft_strncmp(line, "EA", 2))
-        *p_tex = d->ea;
-	/*
-    else if (!ft_strncmp(line, "F", 1))
-    else if (!ft_strncmp(line, "C", 1))
-    */
+		p_tex = d->ea;
 	line += 2;
 	while (ft_isspace(*line) && *line != '\n')
 		line++;
-	line[ft_strlen(line - 1)] = '\0';
+	line[ft_strlen(line) - 1] = '\0';
 	*p_tex = mlx_load_png(line);
+}
+
+void	ft_load_bg(t_data *d, char *line)
+{
+	int	*p_color;
+	char	**rgb;
+  
+    if (!ft_strncmp(line, "F", 1))
+		p_color = d->f_color;
+    else if (!ft_strncmp(line, "C", 1))
+		p_color = d->c_color;
+	line++;
+	while (ft_isspace(*line) && *line != '\n')
+		line++;
+	line[ft_strlen(line) - 1] = '\0';
+	rgb = ft_split(line, ',');
+	*p_color = get_rgba(ft_atoi(rgb[0]), ft_atoi(rgb[1]), ft_atoi(rgb[2]), 255);
+	free(rgb[0]);
+	free(rgb[1]);
+	free(rgb[2]);
+	free(rgb);
+}
+
+void    ft_load_mapdata(t_data *d, char *line)
+{
+	while (ft_isspace(*line) && *line != '\n')
+		line++;
+	
+	if (!ft_strncmp(line, "NO", 2) || !ft_strncmp(line, "SO", 2) || !ft_strncmp(line, "WE", 2) || !ft_strncmp(line, "EA", 2))
+		ft_load_texture(d, line);
+	else if (!ft_strncmp(line, "F", 1) || !ft_strncmp(line, "C", 1))
+		ft_load_bg(d, line);
 }
 
 int ft_parse_input(int argc, char **argv, t_data *d)
 {
-    (void)d;//tmp
-
+	d->no = ft_calloc(1, sizeof(mlx_texture_t));
+	d->so = ft_calloc(1, sizeof(mlx_texture_t));
+	d->we = ft_calloc(1, sizeof(mlx_texture_t));
+	d->ea = ft_calloc(1, sizeof(mlx_texture_t));
+	d->f_color = ft_calloc(1, sizeof(int));
+	d->c_color = ft_calloc(1, sizeof(int));
+	
 	//Verify correct file type passed as argument
     if (argc != 2 || ft_wrong_file(argv[1]))
     {
@@ -61,8 +92,9 @@ int ft_parse_input(int argc, char **argv, t_data *d)
         if (line[0] != '\n')
 			ft_load_mapdata(d, line);
         free(line);
-		get_next_line(scenefd);        
+		line = get_next_line(scenefd);
     }
 
-    return (0);
+
+	return (0);
 }

@@ -18,11 +18,11 @@ CC		=	gcc
 
 #M_MLX_F	=	-O3 -ffast-math -Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
 
-L_FLAGS =	-Wall -Wextra -Werror -MMD -g  #-fsanitize=address
+L_FLAGS =	-Wall -Wextra -Werror -MMD -g  -fsanitize=address
 
 #L_MLX_F =	-ldl -lglfw -lm
 
-SRC	=	main.c parse.c
+SRC	=	main.c parse.c utils.c
 
 OBJ		=	$(SRC:.c=.o)
 
