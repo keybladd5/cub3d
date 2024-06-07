@@ -35,6 +35,7 @@ typedef struct s_data_player
 	double speed_advance; 
 	double speed_turn_on;
 	double angle_rotation; //en radianes
+	int lateral_move;
 	int x;
 	int y;
 	float fov_radians;

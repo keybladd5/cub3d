@@ -48,32 +48,8 @@ mlx_texture_t *get_texture_walls(t_data *d, int flag)
 			return (d->tex.no);// north wall
 	}
 }
-/*void	draw_wall(t_data *d, int ray, int t_pix, int b_pix)	// draw the wall
-{
-	int color;
 
-	color = color_walls(d, d->cast_rays.flag);
-	while (t_pix < b_pix)
-	{
-		if(t_pix == 0 || t_pix == HEIGHT)
-			safe_pixel_put(d->image, ray, t_pix++, get_rgba(0, 0, 0, 255));
-		else
-			safe_pixel_put(d->image, ray, t_pix++, color);
-	}
-}*/
-double	get_x_o(mlx_texture_t	*texture, t_data *d)
-{
-	double	x_o;
-
-	if (d->cast_rays.flag == 1)
-		x_o = (int)fmodf((d->cast_rays.wall_hit_x_horizontal * \
-		(texture->width / TILE_SIZE)), texture->width);
-	else
-		x_o = (int)fmodf((d->cast_rays.wall_hit_y_vertical * \
-		(texture->width / TILE_SIZE)), texture->width);
-	return (x_o);
-}
-void	draw_wall_texture(t_data *d, int t_pix, int b_pix, double wall_h)
+void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double wall_h)
 {
 	double			x_o;
 	double			y_o;
@@ -90,17 +66,17 @@ void	draw_wall_texture(t_data *d, int t_pix, int b_pix, double wall_h)
 		x_o = (uint32_t)fmodf((d->cast_rays.wall_hit_x_horizontal * (texture->width / TILE_SIZE)), texture->width);
 	else
 		x_o = (uint32_t)fmodf((d->cast_rays.wall_hit_y_vertical * (texture->width / TILE_SIZE)), texture->width);
-	y_o = (t_pix - (HEIGHT / 2) + (wall_h / 2)) * factor;
+	y_o = (top_pix - (HEIGHT / 2) + (wall_h / 2)) * factor;
 	if (y_o < 0)
 		y_o = 0;
-	while (t_pix < b_pix)
+	while (top_pix < bottom_pix)
 	{
 		if ((uint32_t)y_o < texture->height && (uint32_t)x_o < texture->width)
         {
-            safe_pixel_put(d->image, d->cast_rays.index, t_pix, reverse_bytes(arr[(int)y_o * texture->width + (int)x_o]));
+            safe_pixel_put(d->image, d->cast_rays.index, top_pix, reverse_bytes(arr[(int)y_o * texture->width + (int)x_o]));
         }
 		y_o += factor;
-		t_pix++;
+		top_pix++;
 	}
 }
 
@@ -110,8 +86,8 @@ void	draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix)	// draw the fl
 
 	i = b_pix;
 	while (i < HEIGHT)
-		safe_pixel_put(d->image, ray, i++, get_rgba(189, 181, 125, 125)); // floor
+		safe_pixel_put(d->image, ray, i++, get_rgba(189, 181, 125, 255)); // floor
 	i = 0;
 	while (i < t_pix)
-		safe_pixel_put(d->image, ray, i++, get_rgba(255, 255, 255, 125)); // ceiling
+		safe_pixel_put(d->image, ray, i++, get_rgba(255, 255, 255, 255)); // ceiling
 }

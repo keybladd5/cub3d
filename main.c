@@ -107,6 +107,7 @@ int main(void)
 	d.data_player.x = d.map_x * TILE_SIZE + TILE_SIZE / 2;
 	d.data_player.y = d.map_x * TILE_SIZE + TILE_SIZE / 2;
 	d.data_player.fov_radians = (FOV * M_PI) / 180;
+	d.data_player.lateral_move = 0;
 	//d.tex.ea = malloc(sizeof(mlx_texture_t));
 	d.tex.ea = mlx_load_png("./assets/ea.png");
 	if(!d.tex.ea)
