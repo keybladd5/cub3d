@@ -11,7 +11,7 @@ int ft_wrong_file(char *scene)
     return (1);
 }
 
-void	ft_load_texture(t_data *d, char *line)
+int	ft_load_texture(t_data *d, char *line)
 {
 	mlx_texture_t   **p_tex;
 
@@ -28,6 +28,12 @@ void	ft_load_texture(t_data *d, char *line)
 		line++;
 	line[ft_strlen(line) - 1] = '\0';
 	*p_tex = mlx_load_png(line);
+	if (!*p_tex) //la funcion mlx_load_png ya printea un mensaje de error cuando falla (?)
+	{
+		printf("Error\nUnable to open texture asset\n");
+		return (1);
+	}
+	return (0);
 }
 
 void	ft_load_bg(t_data *d, char *line)
@@ -51,26 +57,22 @@ void	ft_load_bg(t_data *d, char *line)
 	free(rgb);
 }
 
-void    ft_load_mapdata(t_data *d, char *line)
+int    ft_load_mapdata(t_data *d, char *line)
 {
 	while (ft_isspace(*line) && *line != '\n')
 		line++;
-	
 	if (!ft_strncmp(line, "NO", 2) || !ft_strncmp(line, "SO", 2) || !ft_strncmp(line, "WE", 2) || !ft_strncmp(line, "EA", 2))
-		ft_load_texture(d, line);
+	{
+		if(ft_load_texture(d, line))
+			return (1);
+	}
 	else if (!ft_strncmp(line, "F", 1) || !ft_strncmp(line, "C", 1))
 		ft_load_bg(d, line);
+	return (0);
 }
 
 int ft_parse_input(int argc, char **argv, t_data *d)
 {
-	d->no = ft_calloc(1, sizeof(mlx_texture_t));
-	d->so = ft_calloc(1, sizeof(mlx_texture_t));
-	d->we = ft_calloc(1, sizeof(mlx_texture_t));
-	d->ea = ft_calloc(1, sizeof(mlx_texture_t));
-	d->f_color = ft_calloc(1, sizeof(int));
-	d->c_color = ft_calloc(1, sizeof(int));
-	
 	//Verify correct file type passed as argument
     if (argc != 2 || ft_wrong_file(argv[1]))
     {
@@ -85,16 +87,23 @@ int ft_parse_input(int argc, char **argv, t_data *d)
 		printf("Error\nUnable to open specified scene file\n");
 		return (1);
 	}
+	//init textures & background data
+	d->no = ft_calloc(1, sizeof(mlx_texture_t));
+	d->so = ft_calloc(1, sizeof(mlx_texture_t));
+	d->we = ft_calloc(1, sizeof(mlx_texture_t));
+	d->ea = ft_calloc(1, sizeof(mlx_texture_t));
+	d->f_color = ft_calloc(1, sizeof(int));
+	d->c_color = ft_calloc(1, sizeof(int));
 	//GNL loop until all data has been found
     char    *line = get_next_line(scenefd);
     while (line && line[0] != '1' && line[0] != '0') //if a line begins with 0 or 1 means it's the map (always last element)
     {
         if (line[0] != '\n')
-			ft_load_mapdata(d, line);
+			if(ft_load_mapdata(d, line))
+				return (free(line), 1);
         free(line);
 		line = get_next_line(scenefd);
     }
-
 
 	return (0);
 }

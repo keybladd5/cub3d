@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 	free(d->we);
 	free(d->ea);
 	free(d);
-	return (EXIT_SUCCESS);
+	exit (EXIT_SUCCESS);
 }
 
 /*
