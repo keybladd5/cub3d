@@ -14,25 +14,14 @@
 
 int main(int argc, char **argv)
 {
-	t_data	*d;
+	t_data	d;
 
-	d = (t_data *)ft_calloc(1, sizeof(t_data));
-	if (ft_parse_input(argc, argv, d))
-		exit(EXIT_FAILURE);
+	if (ft_parse_input(argc, argv, &d.map))
+		return(EXIT_FAILURE);
 
 	//free all allocated memory
-	free(d->c_color);
-	free(d->f_color);
-	free(*d->no);
-	free(*d->so);
-	free(*d->we);
-	free(*d->ea);
-	free(d->no);
-	free(d->so);
-	free(d->we);
-	free(d->ea);
-	free(d);
-	exit (EXIT_SUCCESS);
+	ft_free_map(&d.map);
+	return (EXIT_SUCCESS);
 }
 
 /*

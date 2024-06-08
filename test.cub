@@ -1,7 +1,7 @@
-NO ./assets/no.png
-SO ./assets/so.png
+NO     ./assets/no.png
+    SO    ./assets/so.png
 WE ./assets/we.png
 EA ./assets/ea.png
 
-F    189,181,125
-C  255,255,255
+F 010,5,200
+C 35,21,3
