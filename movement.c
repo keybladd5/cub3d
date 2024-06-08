@@ -34,7 +34,7 @@ void ft_movement_hook(void *param)
 		d->data_player.lateral_move = 1;
 		d->data_player.advance += 1;
 	}
-	if (mlx_is_key_down(d->mlx, MLX_KEY_RIGHT) == true)
+	if (mlx_is_key_down(d->mlx, MLX_KEY_LEFT) == true)
 	{
 		d->data_player.lateral_move = -1;
 		d->data_player.advance += 1;
@@ -70,11 +70,15 @@ void ft_move_player(t_data *d)
 {
 	int new_x;
 	int new_y;
+	double tmp_angle_rotation;
 
 	if (d->data_player.lateral_move != 0)
-		d->data_player.angle_rotation += LATERAL_RADIANS * d->data_player.lateral_move;
-	new_x =  roundf(d->data_player.x  + (d->data_player.advance * cos(d->data_player.angle_rotation) * d->data_player.speed_advance)); 
-	new_y =  roundf(d->data_player.y  +  (d->data_player.advance * sin(d->data_player.angle_rotation) * d->data_player.speed_advance));
+		tmp_angle_rotation = d->data_player.angle_rotation + (LATERAL_RADIANS * d->data_player.lateral_move);
+	else
+		tmp_angle_rotation = d->data_player.angle_rotation;
+	//d->data_player.angle_rotation += LATERAL_RADIANS * d->data_player.lateral_move;
+	new_x =  roundf(d->data_player.x  + (d->data_player.advance * cos(tmp_angle_rotation) * d->data_player.speed_advance)); 
+	new_y =  roundf(d->data_player.y  +  (d->data_player.advance * sin(tmp_angle_rotation) * d->data_player.speed_advance));
 	//checkeo de colisiones
 	if (collider_checker(d, new_y , new_x)&& (collider_checker(d, new_y , d->data_player.x) && collider_checker(d, d->data_player.y, new_x))) // check the wall hit and the diagonal wall hit)
 	{	
