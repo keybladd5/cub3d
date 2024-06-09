@@ -66,7 +66,6 @@ void ft_game_loop(void *param)
 {
 	t_data *d = param;
 	mlx_delete_image(d->mlx, d->image);
-	//mlx_delete_image(d->mlx, d->minmap.map);
 	d->image = mlx_new_image(d->mlx, WIDTH, HEIGHT);
 	if (!d->image)
 		ft_mlx_error();
@@ -74,13 +73,6 @@ void ft_game_loop(void *param)
 	ft_cast_rays(d);
 	ft_draw_minimap(d);
 	mlx_image_to_window(d->mlx, d->image, 0, 0);
-	/*d->minmap.map = mlx_new_image(d->mlx, d->size_x * MINIMAP_TILE_SIZE, d->size_y * MINIMAP_TILE_SIZE);
-	if (!d->minmap.map)
-		ft_mlx_error();
-	mlx_image_to_window(d->mlx, d->minmap.map, 0, 0);*/
-	//ft_draw_minimap(d);
-	//parte para añadir un asset que represente al player, pero lo carga con transparencia 
-	//ft_load_texture_beta(d);
 }
 
 int main(void)

@@ -62,7 +62,7 @@ void	check_side(t_data *d, double angle)
 	else
 		d->data_player.south = false;
 
-	if (angle > (M_PI / 2) && angle < (3 * M_PI) / 2)
+	if (angle > (M_PI * 0.5) && angle < (3 * M_PI) * 0.5)
 		d->data_player.west = true;
 	else
 		d->data_player.west = false;
@@ -188,7 +188,7 @@ void ft_cast_rays(t_data *d)
 	double x_collision;
 	double y_collision;
 	int ray = 0;
-	d->cast_rays.ray_ngl = d->data_player.angle_rotation - (d->data_player.fov_radians / 2);
+	d->cast_rays.ray_ngl = d->data_player.angle_rotation - (d->data_player.fov_radians * 0.5);
 	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
 	while (ray < WIDTH)
 	{
