@@ -5,7 +5,7 @@ mlx_texture_t	*ft_load_texture(char *line)
 	mlx_texture_t	*p_tex;
 
 	line += 2;
-	while (ft_isspace(*line) && *line != '\n')
+	while (ft_isspace(*line) && *line != '\n') //if identifier not followed by at least 1 space = Error???
 		line++;
 	ft_search_replace(line, '\n', '\0');
 	p_tex = mlx_load_png(line);
@@ -74,12 +74,14 @@ int	ft_load_bg(t_map *map, char *line)
 	char	c_or_f;
 
 	c_or_f = *line++;
-	while (ft_isspace(*line) && *line != '\n')
+	while (ft_isspace(*line) && *line != '\n') //if identifier not followed by at least 1 space = Error???
 		line++;
 	ft_search_replace(line, '\n', '\0');
 	if (ft_check_rgb(line))
 		return (1);
 	rgb = ft_split(line, ',');
+	if (!rgb)
+		return (1);
 	i = 0;
 	while (i < 3)
 	{
@@ -95,10 +97,23 @@ int	ft_load_bg(t_map *map, char *line)
 	return (free(rgb[0]), free(rgb[1]), free(rgb[2]), free(rgb), 0);
 }
 
+int	ft_check_dupdata(t_map *map, char *line)
+{
+	if ((!ft_strncmp(line, "NO", 2) && map->no) || \
+	(!ft_strncmp(line, "SO", 2) && map->so) || \
+	(!ft_strncmp(line, "WE", 2) && map->we) || \
+	(!ft_strncmp(line, "EA", 2) && map->ea) || \
+	(!ft_strncmp(line, "F", 1) && map->f_color) || \
+	(!ft_strncmp(line, "C", 1) && map->c_color))
+		return (1);
+	return (0);
+}
 int	ft_load_mapdata(t_map *map, char *line)
 {
 	while (ft_isspace(*line) && *line != '\n')
 		line++;
+	if (ft_check_dupdata(map, line))
+		return (ft_putstr_fd("Error\nDuplicate scene data found\n", 2), 1);
 	if (!ft_strncmp(line, "NO", 2) || !ft_strncmp(line, "SO", 2) || !ft_strncmp(line, "WE", 2) || !ft_strncmp(line, "EA", 2))
 	{
 		if (ft_read_texture(map, line))

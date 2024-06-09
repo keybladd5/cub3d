@@ -22,12 +22,16 @@ int	ft_parse_input(int argc, char **argv, t_map *map)
 	if (scenefd == -1)
 		return (ft_putstr_fd("Error\nUnable to open specified scene file\n", 2), 1);
 	//GNL loop until all data has been found
+	int	data_count = 0;
 	char    *line = get_next_line(scenefd);
-	while (line && line[0] != '1' && line[0] != '0') //if a line begins with 0 or 1 means it's the map (always last element)
+	while (line && data_count < 6 && line[0] != '1' && line[0] != '0') //if a line begins with 0 or 1 means it's the map (always last element)
 	{
 		if (line[0] != '\n')
+		{
 			if (ft_load_mapdata(map, line))
 				return (ft_free_map(map), free(line), 1);
+			data_count++;
+		}
 		free(line);
 		line = get_next_line(scenefd);
 	}
@@ -36,6 +40,13 @@ int	ft_parse_input(int argc, char **argv, t_map *map)
 		return (ft_putstr_fd("Error\nMissing texture/background data\n", 2), free(line), ft_free_map(map), 1);
 	
 	//GNL loop to read map
+	//skip empty lines
+	while(line && (line[0] == '\n'))
+	{
+		free(line);
+		line = get_next_line(scenefd);
+	}
+	//append 
 	char	*map_str = ft_strdup("");
 	while(line)
 	{
@@ -44,17 +55,37 @@ int	ft_parse_input(int argc, char **argv, t_map *map)
 		map_str = ft_strjoin_free(map_str, line);
 		line = get_next_line(scenefd);
 	}
+	//check for unexpcted chars in map
+	int i = 0;
+	int j = 0;
+	while (map_str[i])
+	{
+		j = 0;
+		while (j < 8)
+		{
+			if ("10NSWE \n"[j] == map_str[i])
+				break ;
+			j++;
+		}
+		if (j == 8)
+			return (ft_putstr_fd("Error\nUnexpected character found in map\n", 2), free(map_str), ft_free_map(map), 1);
+		i++;
+	}
+
+	//split map and store in struct, then fill spaces and check it's closed by walls
+	map->map = ft_split(map_str, '\n');
+	if (!map->map)
+		return (free(map_str), 1);
+	free(map_str);
+
 
 	
-	map->map = ft_split(map_str, '\n');
-	free(map_str);
-	
 	//debug
-	int	j = 0;
-	while (map->map[j])
+	int	k = 0;
+	while (map->map[k])
 	{
-		printf("%s\n", map->map[j]);
-		j++;
+		printf("%s\n", map->map[k]);
+		k++;
 	}
 
 	return (0);

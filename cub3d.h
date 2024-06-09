@@ -20,8 +20,8 @@
 #include <unistd.h>
 #include "libft/libft.h"
 
-#define WIDTH 1600 // x
-#define HEIGHT 1200 // y
+#define WIDTH 1920 // x
+#define HEIGHT 1080 // y
 #define TILE_SIZE 64 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
 
 typedef struct s_map
@@ -30,8 +30,8 @@ typedef struct s_map
 	mlx_texture_t   *so;
 	mlx_texture_t	*we;
 	mlx_texture_t	*ea;
-    int f_color;
-    int c_color;
+    uint32_t f_color;
+    uint32_t c_color;
     char    **map;
 }   t_map;
 
@@ -39,6 +39,8 @@ typedef struct s_data
 {
     mlx_t   *mlx;
     t_map   map;
+
+    mlx_image_t *background;
 
 }   t_data;
 
