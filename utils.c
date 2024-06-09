@@ -8,6 +8,8 @@ int get_rgba(int r, int g, int b, int a)
 
 void    ft_free_map(t_map *map)
 {
+	int	i;
+
 	if (map->no)
 		mlx_delete_texture(map->no);
 	if (map->so)
@@ -16,6 +18,16 @@ void    ft_free_map(t_map *map)
 		mlx_delete_texture(map->we);
 	if (map->ea)
 		mlx_delete_texture(map->ea);
+	if (map->map)
+	{
+		i = 0;
+		while (map->map[i])
+		{
+			free (map->map[i]);
+			i++;
+		}
+		free(map->map);
+	}
 }
 
 void	ft_search_replace(char *str, char og, char new)

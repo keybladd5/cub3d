@@ -39,11 +39,6 @@ typedef struct s_data
 {
     mlx_t   *mlx;
     t_map   map;
-   
-
-    
-
-    
 
 }   t_data;
 
@@ -55,3 +50,5 @@ int get_rgba(int r, int g, int b, int a);
 void    ft_free_map(t_map *map);
 
 void	ft_search_replace(char *str, char og, char new);
+
+int	ft_load_mapdata(t_map *map, char *line);
