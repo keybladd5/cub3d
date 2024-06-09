@@ -19,26 +19,30 @@ void ft_movement_hook(void *param)
 	if (mlx_is_key_down(d->mlx, MLX_KEY_ESCAPE))
 	{
 		ft_free_map(d->map);
-		return (mlx_close_window(d->mlx));
+		mlx_close_window(d->mlx);
+		exit(1);
+		//return (mlx_close_window(d->mlx));
 	}
 	if (mlx_is_key_down(d->mlx, MLX_KEY_W) == true)
 		d->data_player.advance += 1;
 	if (mlx_is_key_down(d->mlx, MLX_KEY_S) == true)
 		d->data_player.advance -= 1;
-	if (mlx_is_key_down(d->mlx, MLX_KEY_D) == true)
-		d->data_player.turn_on = 1;
-	if (mlx_is_key_down(d->mlx, MLX_KEY_A) == true)
-		d->data_player.turn_on = -1;
 	if (mlx_is_key_down(d->mlx, MLX_KEY_RIGHT) == true)
+		d->data_player.turn_on = 1;
+	if (mlx_is_key_down(d->mlx, MLX_KEY_LEFT) == true)
+		d->data_player.turn_on = -1;
+	if (mlx_is_key_down(d->mlx, MLX_KEY_D) == true)
 	{
 		d->data_player.lateral_move = 1;
 		d->data_player.advance += 1;
 	}
-	if (mlx_is_key_down(d->mlx, MLX_KEY_LEFT) == true)
+	if (mlx_is_key_down(d->mlx, MLX_KEY_A) == true)
 	{
 		d->data_player.lateral_move = -1;
 		d->data_player.advance += 1;
 	}
+	if (mlx_is_key_down(d->mlx, MLX_KEY_LEFT_SHIFT) == true)
+		d->data_player.speed_advance = 8.0;
 		//funcion que que setea una flag que indica(resta 90 grados) y pone advance en +1
 	//if (mlx_is_key_down(d->mlx, MLX_KEY_LEFT) == true)
 		//funcion que que setea una flag que indica(suma 90 grados) y pone advance en +1
@@ -63,6 +67,8 @@ void ft_movement_hook(void *param)
 		d->data_player.turn_on = 0;
 	if (d->data_player.lateral_move != 0)
 		d->data_player.lateral_move = 0;
+	if (d->data_player.speed_advance == 8.0)
+		d->data_player.speed_advance = 4.0;
 
 }
 

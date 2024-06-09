@@ -21,13 +21,13 @@
 #include <unistd.h>
 #include "libft/libft.h"
 
-# define WIDTH 1900 // x
-# define HEIGHT 950 // y
+# define WIDTH 	1920 // x
+# define HEIGHT 1080 // y
 # define TILE_SIZE 64 //tamaño de cada casilla ya sea x_side o y_side (SON CUADRADAS)
+# define MINIMAP_TILE_SIZE 15
 # define LATERAL_RADIANS 1.570796326794897
 # define FOV 60
 # define M_PI		3.14159265358979323846	/* pi */
-
 typedef struct s_data_player
 {
 	int advance; 
@@ -43,6 +43,18 @@ typedef struct s_data_player
 	bool south;
 
 } t_data_player;
+
+typedef struct s_minimap
+{
+	int				heigt;
+	int				width;
+	int				x;
+	int				y;
+	int 			x_limit;
+	int 			y_limit;
+	mlx_image_t		*map;
+
+}	t_minimap;
 
 typedef struct s_rays
 {
@@ -74,6 +86,7 @@ typedef struct s_data
 	t_data_player	data_player;
 	t_rays			cast_rays;
 	t_textures		tex;
+	t_minimap		minmap;
 	char 			**map;
 	int				map_x;
 	int				map_y;
@@ -119,3 +132,7 @@ void	ft_mlx_error(void);
 void	draw_wall_texture(t_data *d, int t_pix, int b_pix, double wall_h);
 
 int	reverse_bytes(int c);
+
+void ft_draw_minimap(t_data *d);
+
+void ft_draw_square(mlx_image_t *image, t_minimap *map,  int color);

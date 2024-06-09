@@ -168,9 +168,9 @@ void render_walls(t_data *d, int ray)
 
 
 	d->cast_rays.distance *= cos(nor_angle(d->cast_rays.ray_ngl - d->data_player.angle_rotation));//corect fish eye
-	wall_h = (TILE_SIZE / d->cast_rays.distance) * ((WIDTH / 2) / tan(d->data_player.fov_radians / 2));
-	b_pix = (HEIGHT / 2) + (wall_h / 2);
-	t_pix = (HEIGHT / 2) - (wall_h / 2);
+	wall_h = (TILE_SIZE / d->cast_rays.distance) * ((WIDTH * 0.5) / tan(d->data_player.fov_radians * 0.5));
+	b_pix = (HEIGHT >> 1) + (wall_h  * 0.5);
+	t_pix = (HEIGHT >> 1) - (wall_h * 0.5);
 	if (b_pix > HEIGHT) // check the bottom pixel
 		b_pix = HEIGHT;
 	if (t_pix < 0) // check the top pixel

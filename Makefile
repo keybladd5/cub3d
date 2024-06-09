@@ -14,15 +14,9 @@ NAME	=	cub3d
 
 CC		=	gcc
 
-#M_FLAGS	=	-Wall -Wextra -Werror -MMD -g0 #-fsanitize=address
-
-#M_MLX_F	=	-O3 -ffast-math -Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
-
 L_FLAGS =	-Wall -Wextra -Werror -MMD -g  #-fsanitize=address
 
-#L_MLX_F =	-ldl -lglfw -lm
-
-SRC	=	main.c draw.c render.c movement.c
+SRC	=	main.c draw.c render.c movement.c minimap.c
 
 OBJ		=	$(SRC:.c=.o)
 
@@ -35,7 +29,7 @@ INCLUDE := $(addprefix -I,$(INCLUDE))
 
 # This should allow compilation on linux (no windows support)
 
-MLX_FLAGS := -ldl -lglfw -lm
+MLX_FLAGS := -O3 -ffast-math -funroll-loops -march=native -ldl -lglfw -lm
 
 LIBFT_ROOT	:= libft/
 
