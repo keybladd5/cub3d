@@ -46,28 +46,24 @@ typedef struct s_data_player
 
 typedef struct s_minimap
 {
-	int				heigt;
-	int				width;
 	int				x;
 	int				y;
 	int 			x_limit;
 	int 			y_limit;
-	mlx_image_t		*map;
-
 }	t_minimap;
 
 typedef struct s_rays
 {
 	int flag;//if horizontal collision is the lower 1, else 0
-	int index;
+	int index;//index of rays
 	double wall_hit_x_horizontal;
 	double wall_hit_y_horizontal;
 	double wall_hit_x_vertical;
 	double wall_hit_y_vertical;	
 	double y_intercept;
 	double x_intercept;
-	double ray_ngl;
-	double distance;
+	double ray_ngl;//angle of ray
+	double distance;//beteen 2 impacts x and y
 
 }	t_rays;
 
