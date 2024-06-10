@@ -14,7 +14,7 @@ NAME	=	cub3d
 
 CC		=	gcc
 
-L_FLAGS =	-Wall -Wextra -Werror -MMD -g  #-fsanitize=address
+L_FLAGS =	-Wall -Wextra -Werror -MMD -g  -fsanitize=address
 
 SRC	=	main.c draw.c render.c movement.c minimap.c
 
@@ -48,7 +48,7 @@ all		:	makelib $(NAME)
 
 $(NAME)	:	MLX42/build/libmlx42.a $(OBJ)
 		@$(CC) $(L_FLAGS) $(OBJ) libft/libft.a MLX42/build/libmlx42.a -o $(NAME) $(MLX_FLAGS)
-		@echo "${PURPLE}Cub3d Compiled${NC}"
+		@echo "${PURPLE}Cub3d binary Compiled${NC}"
 
 %.o		:	%.c Makefile MLX42/build/libmlx42.a libft/libft.a cub3d.h
 		@$(CC) $(L_FLAGS) $(INCLUDE) -c $< -o $@
@@ -69,12 +69,13 @@ makelib	:
 clean	:
 		@echo "${RED}Deleting objects and dependencies ${NC}"
 		@rm -rf $(OBJ) $(DEPS)
-		@$(MAKE) -j -C libft/ clean
+		@$(MAKE) -j -C libft/ clean > /dev/null
 
 fclean	:	clean
-		@$(MAKE) -C MLX42/build clean -j
-		@$(MAKE) -j -C libft/ fclean
-		rm -f $(NAME)
+		@$(MAKE) -C MLX42/build clean -j > /dev/null
+		@$(MAKE) -j -C libft/ fclean > /dev/null
+		@echo "${RED}Deleting Cub3d binary ${NC}"
+		@rm -f $(NAME)
 
 re		:	fclean all
 

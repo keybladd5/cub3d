@@ -18,10 +18,11 @@
 //Parece logico pensar que es mejor multiplicar M_PI * 0.180 , pero el output es diferente a nivel de decimales, es noatble esta diferencia para los
 //calculos del render?
 
-/*Normalizes an angle to ensure that it is always in the range 0 to 2π radians. 
+/*Normalizes an angle to ensure that it is always in the 
+range 0 to 2π radians. 
 If the angle is negative, 2π is added. 
 If the angle is greater than 2π, 2π is subtracted.*/
-double nor_angle(double angle) // normalize the angle
+double	nor_angle(double angle) // normalize the angle
 {
 	if (angle < 0)
 		angle += (2 * M_PI);
@@ -33,7 +34,7 @@ double nor_angle(double angle) // normalize the angle
 /*Checks if a specific position on the map is free of collisions. 
 If the coordinates (x, y) are out of bounds or if the map cell contains
  a '1' (indicating a wall), it returns 0. Otherwise, it returns 1*/
-int collider_checker(t_data *d, double y, double x)
+int	collider_checker(t_data *d, double y, double x)
 {
 	int		x_m;
 	int		y_m;
@@ -55,13 +56,12 @@ int collider_checker(t_data *d, double y, double x)
 /*Determines whether the angle points south and/or west and updates 
 the corresponding boolean values 
 ​​in d->data_player.south and d->data_player.west.*/
-void	check_side(t_data *d, double angle)	
+void	check_side(t_data *d, double angle)
 {
 	if (angle > 0 && angle < M_PI)
 		d->data_player.south = true;
 	else
 		d->data_player.south = false;
-
 	if (angle > (M_PI * 0.5) && angle < (3 * M_PI) * 0.5)
 		d->data_player.west = true;
 	else
@@ -129,7 +129,7 @@ double	get_v_inter(t_data *d, double angl)
 	double	y_step;
 	int		pixel;
 
-	x_step = TILE_SIZE; 
+	x_step = TILE_SIZE;
 	y_step = TILE_SIZE * tan(angl);
 	v_x = floor(d->data_player.x / TILE_SIZE) * TILE_SIZE;
 	check_side(d, nor_angle(angl));
@@ -143,7 +143,7 @@ double	get_v_inter(t_data *d, double angl)
 		pixel = 1;
 		x_step *= -1;
 	}
-	v_y = d->data_player.y + (v_x - d->data_player.x ) * tan(angl);
+	v_y = d->data_player.y + (v_x - d->data_player.x) * tan(angl);
 	if ((d->data_player.south == true && y_step < 0) || (d->data_player.south == false && y_step > 0)) // check y_step value
 		y_step *= -1;
 	while (collider_checker(d, v_y, v_x - pixel)) // check the wall hit whit the pixel value
@@ -163,32 +163,35 @@ the floor and the ceiling.*/
 void render_walls(t_data *d, int ray)
 {
 	double	wall_h;
-	double	b_pix;
+	double	bottom_pix;
 	double	t_pix;
 
 
 	d->cast_rays.distance *= cos(nor_angle(d->cast_rays.ray_ngl - d->data_player.angle_rotation));//corect fish eye
 	wall_h = (TILE_SIZE / d->cast_rays.distance) * ((WIDTH * 0.5) / tan(d->data_player.fov_radians * 0.5));
-	b_pix = (HEIGHT >> 1) + (wall_h  * 0.5);
+	bottom_pix = (HEIGHT >> 1) + (wall_h  * 0.5);
 	t_pix = (HEIGHT >> 1) - (wall_h * 0.5);
-	if (b_pix > HEIGHT) // check the bottom pixel
-		b_pix = HEIGHT;
+	if (bottom_pix > HEIGHT) // check the bottom pixel
+		bottom_pix = HEIGHT;
 	if (t_pix < 0) // check the top pixel
 		t_pix = 0;
 	d->cast_rays.index = ray;
-	draw_wall_texture(d, t_pix, b_pix, wall_h); // draw the wall
-	draw_floor_ceiling(d, ray, t_pix, b_pix); // draw the floor and the ceiling
+	draw_wall_texture(d, t_pix, bottom_pix, wall_h); // draw the wall
+	draw_floor_ceiling(d, ray, t_pix, bottom_pix); // draw the floor and the ceiling
 }
 /*Launches rays from the player's position at various angles 
 within the field of vision. Calculate the intersections 
 nearest horizontals and verticals for each ray, 
 determines which one is closest and renders the walls on the screen.*/
-void ft_cast_rays(t_data *d)
+void	ft_cast_rays(t_data *d)
 {
-	double x_collision;
-	double y_collision;
-	int ray = 0;
-	d->cast_rays.ray_ngl = d->data_player.angle_rotation - (d->data_player.fov_radians * 0.5);
+	double	x_collision;
+	double	y_collision;
+	int		ray;
+
+	ray = 0;
+	d->cast_rays.ray_ngl = \
+	d->data_player.angle_rotation - (d->data_player.fov_radians * 0.5);
 	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
 	while (ray < WIDTH)
 	{
