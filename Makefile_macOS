@@ -18,7 +18,7 @@ FLAGS	=	-Wall -Wextra -Werror -MMD -g -fsanitize=address
 
 MLX_F	=	-Iinclude -lglfw -framework Cocoa -framework OpenGL -framework IOKit
 
-SRC		=	main.c parse.c
+SRC		=	main.c parse.c parse_mapdata.c utils.c
 
 OBJ		=	$(SRC:.c=.o)
 

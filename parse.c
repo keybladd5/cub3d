@@ -38,7 +38,6 @@ int	ft_parse_input(int argc, char **argv, t_map *map)
 	//Verify all necessary data was found
 	if (!map->no || !map->so || !map->we || !map->ea || !map->f_color || !map->c_color)
 		return (ft_putstr_fd("Error\nMissing texture/background data\n", 2), free(line), ft_free_map(map), 1);
-	
 	//GNL loop to read map
 	//skip empty lines
 	while(line && (line[0] == '\n'))
@@ -46,7 +45,8 @@ int	ft_parse_input(int argc, char **argv, t_map *map)
 		free(line);
 		line = get_next_line(scenefd);
 	}
-	//append 
+	
+	//append map rows to map_str
 	char	*map_str = ft_strdup("");
 	while(line)
 	{
@@ -55,28 +55,41 @@ int	ft_parse_input(int argc, char **argv, t_map *map)
 		map_str = ft_strjoin_free(map_str, line);
 		line = get_next_line(scenefd);
 	}
-	//check for unexpcted chars in map
+	//check for unexpcted chars in map and only one player spawn (N S W E)
 	int i = 0;
-	int j = 0;
+	int spawn = 0;
 	while (map_str[i])
 	{
-		j = 0;
-		while (j < 8)
+		if (map_str[i] == 'N' || map_str[i] == 'S' || map_str[i] == 'W' || map_str[i] == 'E')
 		{
-			if ("10NSWE \n"[j] == map_str[i])
-				break ;
-			j++;
+			if (spawn)
+				return (ft_putstr_fd("Error\nMultiple spawn points found in map\n", 2), free(map_str), ft_free_map(map), 1);
+			else
+				spawn = 1;
 		}
-		if (j == 8)
+		else if (map_str[i] != '1' && map_str[i] != '0' && map_str[i] != ' ' && map_str[i] != '\n')
 			return (ft_putstr_fd("Error\nUnexpected character found in map\n", 2), free(map_str), ft_free_map(map), 1);
 		i++;
 	}
-
-	//split map and store in struct, then fill spaces and check it's closed by walls
+	if (!spawn)
+		return (ft_putstr_fd("Error\nNo player spawn point found in map\n", 2), free(map_str), ft_free_map(map), 1);
+	//split map and store in struct, then check it's closed by walls and fill the gaps
 	map->map = ft_split(map_str, '\n');
 	if (!map->map)
 		return (free(map_str), 1);
 	free(map_str);
+	
+	//check first row only contains 1s
+	
+	
+	//count rows and store number to check last row only contains 1s
+	int map_rows = 0;
+	while (map->map[map_rows])
+		map_rows++;
+	
+	//get longest row length and store the value. Any row shorter than that must be expanded to that length, filling it with 1s
+
+
 
 
 	
