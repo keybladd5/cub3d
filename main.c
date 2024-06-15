@@ -82,14 +82,14 @@ int	main(void)
 
 	d.map = ft_calloc(10, sizeof(char *));
 	d.map[0] = ft_strdup("11111111111");
-	d.map[1] = ft_strdup("10010000001");
-	d.map[2] = ft_strdup("10010000001");
-	d.map[3] = ft_strdup("100P0101001");
-	d.map[4] = ft_strdup("10010000001");
-	d.map[5] = ft_strdup("10000100001");
-	d.map[6] = ft_strdup("10010111101");
-	d.map[7] = ft_strdup("10010000001");
-	d.map[8] = ft_strdup("11111111111");
+	d.map[1] = ft_strdup("10000001001");
+	d.map[2] = ft_strdup("101110010101");
+	d.map[3] = ft_strdup("101 1P100001");
+	d.map[4] = ft_strdup("101 10011001");
+	d.map[5] = ft_strdup("101 101  101");
+	d.map[6] = ft_strdup("101 10111101");
+	d.map[7] = ft_strdup("101 10000001");
+	d.map[8] = ft_strdup("11  11111111");
 	d.map[9] = NULL;
 	ft_get_size_map(&d, d.map);
 	d.data_player.advance = 0;
