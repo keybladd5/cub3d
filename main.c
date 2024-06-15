@@ -76,10 +76,26 @@ void	ft_game_loop(void *param)
 	ft_draw_minimap(d, 0, 0);
 	mlx_image_to_window(d->mlx, d->image, 0, 0);
 }
+
+void	init_data_player(t_data *d)
+{
+	d->data_player.advance = 0;
+	d->data_player.turn_on = 0;
+	d->data_player.angle_rotation = 0.0;
+	d->data_player.speed_advance = 4.0;
+	d->data_player.speed_turn_on = 4.8 * (M_PI / 180.0);
+	d->data_player.x = d->map_x * TILE_SIZE + (TILE_SIZE >> 1);
+	d->data_player.y = d->map_x * TILE_SIZE + (TILE_SIZE >> 1);
+	d->data_player.fov_radians = (FOV * M_PI) / 180;
+	d->data_player.lateral_move = 0;
+	d->data_player.west = false;
+	d->data_player.south = false;
+}
 int	main(void)
 {
 	t_data	d;
 
+	//parte a sustituir con la version del ales
 	d.map = ft_calloc(10, sizeof(char *));
 	d.map[0] = ft_strdup("11111111111");
 	d.map[1] = ft_strdup("10000001001");
@@ -92,17 +108,7 @@ int	main(void)
 	d.map[8] = ft_strdup("11  11111111");
 	d.map[9] = NULL;
 	ft_get_size_map(&d, d.map);
-	d.data_player.advance = 0;
-	d.data_player.turn_on = 0;
-	d.data_player.angle_rotation = 0.0;
-	d.data_player.speed_advance = 4.0;
-	d.data_player.speed_turn_on = 3.5 * (M_PI / 180.0);
-	d.data_player.x = d.map_x * TILE_SIZE + (TILE_SIZE >> 1);
-	d.data_player.y = d.map_x * TILE_SIZE + (TILE_SIZE >> 1);
-	d.data_player.fov_radians = (FOV * M_PI) / 180;
-	d.data_player.lateral_move = 0;
-	d.data_player.west = false;
-	d.data_player.south = false;
+	init_data_player(&d);
 	d.tex.ea = mlx_load_png("./assets/ea.png");
 	if (!d.tex.ea)
 		ft_mlx_error();
@@ -115,6 +121,7 @@ int	main(void)
 	d.tex.we = mlx_load_png("./assets/we.png");
 	if (!d.tex.we)
 		ft_mlx_error();
+	//parte a sustituir con la version del ales 
 	d.mlx = mlx_init(WIDTH, HEIGHT, "cub3d", true);
 	d.image = mlx_new_image(d.mlx, WIDTH, HEIGHT);
 	ft_cast_rays(&d);
