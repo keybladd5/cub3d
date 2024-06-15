@@ -14,9 +14,9 @@ NAME	=	cub3d
 
 CC		=	gcc
 
-L_FLAGS =	-Wall -Wextra -Werror -MMD -g  -fsanitize=address
+L_FLAGS =	-Wall -Wextra -Werror -MMD -g  #-fsanitize=address
 
-SRC	=	main.c draw.c render.c movement.c minimap.c
+SRC	=	main.c draw.c render.c movement.c minimap.c render_dda.c utils.c
 
 OBJ		=	$(SRC:.c=.o)
 
@@ -26,8 +26,6 @@ MINILIBX_FOLDER ?= MLX42
 MINILIBX_FILE ?= $(MINILIBX_FOLDER)/libmlx42.a
 INCLUDE := include libft/include $(MINILIBX_FOLDER)/include
 INCLUDE := $(addprefix -I,$(INCLUDE))
-
-# This should allow compilation on linux (no windows support)
 
 MLX_FLAGS := -O3 -ffast-math -funroll-loops -march=native -ldl -lglfw -lm
 

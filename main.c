@@ -103,8 +103,6 @@ int	main(void)
 	d.data_player.lateral_move = 0;
 	d.data_player.west = false;
 	d.data_player.south = false;
-	d.cast_rays.x_intercept = 0;
-	d.cast_rays.y_intercept = 0;
 	d.tex.ea = mlx_load_png("./assets/ea.png");
 	if (!d.tex.ea)
 		ft_mlx_error();

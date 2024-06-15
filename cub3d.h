@@ -60,8 +60,6 @@ typedef struct s_rays
 	double	wall_hit_y_horizontal;
 	double	wall_hit_x_vertical;
 	double	wall_hit_y_vertical;	
-	double	y_intercept;
-	double	x_intercept;
 	double	ray_ngl;//angle of ray
 	double	distance;//beteen 2 impacts x and y
 }	t_rays;
@@ -74,6 +72,15 @@ typedef struct s_textures
 	mlx_texture_t	*ea;
 	unsigned int	*arr;
 }	t_textures;
+
+typedef struct s_dda_data
+{
+	double	dda_x;
+	double	dda_y;
+	double	x_step;
+	double	y_step;
+	int		pixel;
+}	t_dda_data;
 
 typedef struct s_data
 {
@@ -104,7 +111,7 @@ int				color_walls(t_data *d, int flag);
 
 mlx_texture_t	*get_texture_walls(t_data *d, int flag);
 
-void			render_walls(t_data *d, int ray);
+void			render_scene(t_data *d, int ray);
 
 void			ft_movement_hook(t_data *d);
 
