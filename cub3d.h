@@ -30,9 +30,10 @@ typedef struct s_map
 	mlx_texture_t   *so;
 	mlx_texture_t	*we;
 	mlx_texture_t	*ea;
-    uint32_t f_color;
-    uint32_t c_color;
-    char    **map;
+    uint32_t		f_color;
+    uint32_t		c_color;
+    int				spawn;
+    char    		**map;
 }   t_map;
 
 typedef struct s_data

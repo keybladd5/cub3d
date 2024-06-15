@@ -78,10 +78,10 @@ int	ft_load_bg(t_map *map, char *line)
 		line++;
 	ft_search_replace(line, '\n', '\0');
 	if (ft_check_rgb(line))
-		return (1);
+		return (1);//Error msg
 	rgb = ft_split(line, ',');
 	if (!rgb)
-		return (1);
+		return (1);//Error msg
 	i = 0;
 	while (i < 3)
 	{
