@@ -72,6 +72,7 @@ typedef struct s_textures
 	mlx_texture_t	*so;
 	mlx_texture_t	*we;
 	mlx_texture_t	*ea;
+	unsigned int	*arr;
 }	t_textures;
 
 typedef struct s_data
