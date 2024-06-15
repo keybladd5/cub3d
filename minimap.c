@@ -12,6 +12,16 @@
 
 #include "cub3d.h"
 
+/**
+ * Draws a square on the image buffer by painting pixels with the 
+ * specified color.
+ * 
+ * @param image Pointer to the image buffer where the square is drawn.
+ * @param map Pointer to the minimap structure defining the square's 
+ * position and size.
+ * @param color Color value to paint the square with.
+ */
+
 void	ft_draw_square(mlx_image_t *image, t_minimap *map, int color)
 {
 	int	y;
@@ -34,7 +44,15 @@ void	ft_draw_square(mlx_image_t *image, t_minimap *map, int color)
 		y++;
 	}
 }
-
+/**
+ * Draws the player's position indicator on the minimap.
+ * 
+ * @param image Pointer to the image buffer where the minimap is drawn.
+ * @param map Pointer to the minimap structure defining the rendering area.
+ * @param color Color of the player indicator on the minimap.
+ * @param ply Pointer to the player's data structure containing 
+ * position information.
+ */
 static void	ft_draw_minmap_player(mlx_image_t *image, \
 t_minimap *map, int color, t_data_player *ply)
 {
@@ -44,7 +62,17 @@ t_minimap *map, int color, t_data_player *ply)
 	map->y_limit = map->y + MINIMAP_TILE_SIZE;
 	ft_draw_square(image, map, color);
 }
-
+/**
+ * Draws the minimap based on the game map data onto 
+ * the specified image buffer.
+ * Each tile on the minimap represents a 
+ * corresponding map cell in the game.
+ *
+ * @param d Pointer to the main data structure 
+ * containing map information and image buffers.
+ * @param y Starting y-coordinate of the minimap rendering.
+ * @param x Starting x-coordinate of the minimap rendering.
+ */
 void	ft_draw_minimap(t_data *d, int y, int x)
 {
 	d->minmap.x = 0;

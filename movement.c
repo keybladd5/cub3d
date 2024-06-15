@@ -11,7 +11,12 @@
 /* ************************************************************************** */
 
 #include "cub3d.h"
-
+/**
+ * Exits the program, freeing resources and closing the window.
+ *
+ * @param param Pointer to the main data structure containing scene 
+ * and graphics information.
+ */
 void	ft_esc(void *param)
 {
 	t_data	*d;
@@ -27,7 +32,13 @@ void	ft_esc(void *param)
 	exit(0);
 }
 
-//Catch the press on keyboard and change player data 
+/**
+ * Catch the press on keyboard and change 
+ * player data based on the keys pressed.
+ *
+ * @param d Pointer to the main data structure 
+ * containing scene, player, and input information.
+ */
 void	ft_hook(t_data *d)
 {
 	if (mlx_is_key_down(d->mlx, MLX_KEY_ESCAPE))
@@ -54,7 +65,13 @@ void	ft_hook(t_data *d)
 		d->data_player.speed_advance = 8.0;
 }
 
-//Handle the keyhook to improve the movement and normalize data
+/**
+ * Handle the key hook to improve player movement
+ *  and normalize data.
+ *
+ * @param d Pointer to the main data structure
+ *  containing scene, player, and input information.
+ */
 void	ft_movement_hook(t_data	*d)
 {
 	ft_hook(d);
@@ -72,7 +89,13 @@ void	ft_movement_hook(t_data	*d)
 	if (d->data_player.speed_advance == 8.0)
 		d->data_player.speed_advance = 4.0;
 }
-
+/**
+ * Moves the player based on current movement 
+ * commands and updates position.
+ *
+ * @param d Pointer to the main data structure
+ *  containing scene, player, and input information.
+ */
 void	ft_move_player(t_data *d)
 {
 	int		new_x;

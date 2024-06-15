@@ -12,16 +12,16 @@
 
 #include "cub3d.h"
 
-//implementar las variables inversas sobre las que se va a divir puede ayudar a optimizar el codigo
-//ejemplo -> M_PI / 180.0 == M_PI * (VARIABLE QUE CONTIENE RESULTADO DE 1.0 / 180.0), si se almacena la variable solo se divide una vez y optimizas 
-//sustituyendo las divisiones por el mismo numero con la variable inversa al numero. Da una exactitud de output del 100%
-//Parece logico pensar que es mejor multiplicar M_PI * 0.180 , pero el output es diferente a nivel de decimales, es noatble esta diferencia para los
-//calculos del render?
-
-/*Normalizes an angle to ensure that it is always in the 
-range 0 to 2π radians. 
-If the angle is negative, 2π is added. 
-If the angle is greater than 2π, 2π is subtracted.*/
+/**
+ * Normalizes an angle to ensure that it is always in the range 0 to 2π 
+ * radians.
+ * If the angle is negative, 2π is added to bring it within the range.
+ * If the angle is greater than 2π, 2π is subtracted to bring it within 
+ * the range.
+ *
+ * @param angle The angle to be normalized, in radians.
+ * @return The normalized angle, in the range [0, 2π) radians.
+ */
 double	nor_angle(double angle) // normalize the angle
 {
 	if (angle < 0)
@@ -31,9 +31,18 @@ double	nor_angle(double angle) // normalize the angle
 	return (angle);
 }
 
-/*Checks if a specific position on the map is free of collisions. 
-If the coordinates (x, y) are out of bounds or if the map cell contains
- a '1' (indicating a wall), it returns 0. Otherwise, it returns 1*/
+/**
+ * Checks if a specific position on the map is free of collisions.
+ * If the coordinates (x, y) are out of bounds or if the map cell contains
+ * a '1' (indicating a wall), it returns 0. Otherwise, it returns 1.
+ *
+ * @param d Pointer to the main data structure containing player and map
+ *  information.
+ * @param y The y-coordinate to check for collisions.
+ * @param x The x-coordinate to check for collisions.
+ * @return 0 if the position is out of bounds or collides with a wall,
+ *  1 otherwise.
+ */
 int	collider_checker(t_data *d, double y, double x)
 {
 	int		x_m;
@@ -41,11 +50,11 @@ int	collider_checker(t_data *d, double y, double x)
 
 	if (x < 0.0 || y < 0.0)
 		return (0);
-	x_m = floor(x  / TILE_SIZE); // get the x position in the map
-	y_m = floor(y  / TILE_SIZE); // get the y position in the map
-	if (y_m  >= d->size_y || x_m >= d->size_x) //cambiado por tamaño mapa
+	x_m = floor(x  / TILE_SIZE);
+	y_m = floor(y  / TILE_SIZE);
+	if (y_m  >= d->size_y || x_m >= d->size_x)
 		return (0);
-	if (x_m < 0 || y_m < 0)//added to save bus or segfault errors
+	if (x_m < 0 || y_m < 0)
 		return (0);
 	if (d->map[y_m] && x_m <= (int)ft_strlen(d->map[y_m]))
 		if (d->map[y_m][x_m] == '1')
@@ -53,9 +62,15 @@ int	collider_checker(t_data *d, double y, double x)
 	return (1);
 }
 
-/*Determines whether the angle points south and/or west and updates 
-the corresponding boolean values 
-​​in d->data_player.south and d->data_player.west.*/
+/**
+ * Determines whether the angle points south and/or west and updates
+ * the corresponding boolean values in d->data_player.south 
+ * and d->data_player.west.
+ *
+ * @param d Pointer to the main data structure 
+ * containing player information.
+ * @param angle The angle to determine directionality, in radians.
+ */
 void	check_side(t_data *d, double angle)
 {
 	if (angle > 0 && angle < M_PI)
@@ -68,121 +83,47 @@ void	check_side(t_data *d, double angle)
 		d->data_player.west = false;
 }
 
-int	reverse_bytes(int c)
-{
-	unsigned int	b;
-
-	b = 0;
-	b |= (c & 0xFF) << 24;
-	b |= (c & 0xFF00) << 8;
-	b |= (c & 0xFF0000) >> 8;
-	b |= (c & 0xFF000000) >> 24;
-	return (b);
-}
-
-/*Calculates the closest horizontal intersection of a ray 
-launched from the player's position at a given angle.
- Returns the distance from the player to the intersection.*/
-double	get_h_inter(t_data *d, double angl)
-{
-	double	h_x;
-	double	h_y;
-	double	x_step;
-	double	y_step;
-	int		pixel;
-
-	y_step = TILE_SIZE;
-	x_step = TILE_SIZE / tan(angl);
-	h_y = floor(d->data_player.y / TILE_SIZE) * TILE_SIZE;
-	check_side(d, nor_angle(angl));
-	if (d->data_player.south == true)
-	{
-		h_y += TILE_SIZE;
-		pixel = -1;
-	}
-	else
-	{
-		pixel = 1;
-		y_step *= -1;
-	}
-	h_x = d->data_player.x + (h_y - d->data_player.y) / tan(angl);
-	if ((d->data_player.west == true && x_step > 0) || (d->data_player.west == false && x_step < 0)) // check x_step value
-		x_step *= -1;
-	while (collider_checker(d, h_y - pixel, h_x)) // check the wall hit whit the pixel value
-	{
-		h_x += x_step;
-		h_y += y_step;
-	}
-	d->cast_rays.wall_hit_x_horizontal = h_x;
-	d->cast_rays.wall_hit_y_horizontal = h_y;
-	return (sqrt(pow(h_x - d->data_player.x, 2) + pow(h_y - d->data_player.y, 2))); // get the distance
-}
-
-/*Calculates the closest vertical intersection of a ray 
-launched from the player's position at a given angle.
- Returns the distance from the player to the intersection.*/
-double	get_v_inter(t_data *d, double angl)
-{
-	double	v_x;
-	double	v_y;
-	double	x_step;
-	double	y_step;
-	int		pixel;
-
-	x_step = TILE_SIZE;
-	y_step = TILE_SIZE * tan(angl);
-	v_x = floor(d->data_player.x / TILE_SIZE) * TILE_SIZE;
-	check_side(d, nor_angle(angl));
-	if (d->data_player.west == false)
-	{
-		v_x += TILE_SIZE;
-		pixel = -1;
-	}
-	else
-	{
-		pixel = 1;
-		x_step *= -1;
-	}
-	v_y = d->data_player.y + (v_x - d->data_player.x) * tan(angl);
-	if ((d->data_player.south == true && y_step < 0) || (d->data_player.south == false && y_step > 0)) // check y_step value
-		y_step *= -1;
-	while (collider_checker(d, v_y, v_x - pixel)) // check the wall hit whit the pixel value
-	{
-		v_x += x_step;
-		v_y += y_step;
-	}
-	d->cast_rays.wall_hit_x_vertical = v_x;
-	d->cast_rays.wall_hit_y_vertical = v_y;
-	return (sqrt(pow(v_x - d->data_player.x, 2) + pow(v_y - d->data_player.y, 2)));
-}
-
-/*renders the walls on the screen correcting fisheye distortion. 
-Calculate the height of the wall and the start and end pixels 
-to draw on the screen, then call the functions that draw the wall, 
-the floor and the ceiling.*/
-void render_walls(t_data *d, int ray)
+/**
+ * Renders the walls on the screen correcting fisheye distortion.
+ * Calculates the height of the wall and the start and end pixels
+ * to draw on the screen, then calls the functions that draw the wall,
+ * the floor, and the ceiling.
+ *
+ * @param d Pointer to the main data structure containing 
+ * scene and player information.
+ * @param ray Index of the current ray being rendered.
+ */
+void render_scene(t_data *d, int ray)
 {
 	double	wall_h;
 	double	bottom_pix;
-	double	t_pix;
+	double	top_pix;
 
 
-	d->cast_rays.distance *= cos(nor_angle(d->cast_rays.ray_ngl - d->data_player.angle_rotation));//corect fish eye
-	wall_h = (TILE_SIZE / d->cast_rays.distance) * ((WIDTH * 0.5) / tan(d->data_player.fov_radians * 0.5));
+	d->cast_rays.distance *= cos(nor_angle\
+	(d->cast_rays.ray_ngl - d->data_player.angle_rotation));
+	wall_h = (TILE_SIZE / d->cast_rays.distance) * \
+	((WIDTH >> 1) / tan(d->data_player.fov_radians * 0.5));
 	bottom_pix = (HEIGHT >> 1) + (wall_h  * 0.5);
-	t_pix = (HEIGHT >> 1) - (wall_h * 0.5);
-	if (bottom_pix > HEIGHT) // check the bottom pixel
+	top_pix = (HEIGHT >> 1) - (wall_h * 0.5);
+	if (bottom_pix > HEIGHT)
 		bottom_pix = HEIGHT;
-	if (t_pix < 0) // check the top pixel
-		t_pix = 0;
+	if (top_pix < 0)
+		top_pix = 0;
 	d->cast_rays.index = ray;
-	draw_wall_texture(d, t_pix, bottom_pix, wall_h); // draw the wall
-	draw_floor_ceiling(d, ray, t_pix, bottom_pix); // draw the floor and the ceiling
+	draw_wall_texture(d, top_pix, bottom_pix, wall_h);
+	draw_floor_ceiling(d, ray, top_pix, bottom_pix);
 }
-/*Launches rays from the player's position at various angles 
-within the field of vision. Calculate the intersections 
-nearest horizontals and verticals for each ray, 
-determines which one is closest and renders the walls on the screen.*/
+
+/**
+ * Launches rays from the player's position at various angles
+ * within the field of vision. Calculates the intersections
+ * with nearest horizontals and verticals for each ray,
+ * determines which one is closest, and renders the walls on the screen.
+ *
+ * @param d Pointer to the main data structure containing 
+ * scene and player information.
+ */
 void	ft_cast_rays(t_data *d)
 {
 	double	x_collision;
@@ -198,14 +139,14 @@ void	ft_cast_rays(t_data *d)
 		d->cast_rays.flag = 0;
 		x_collision = get_h_inter(d, nor_angle(d->cast_rays.ray_ngl));
 		y_collision = get_v_inter(d, nor_angle(d->cast_rays.ray_ngl));
-		if (y_collision <= x_collision) // check the distance
-			d->cast_rays.distance = y_collision; // get the distance
+		if (y_collision <= x_collision)
+			d->cast_rays.distance = y_collision;
 		else
 		{
-			d->cast_rays.distance = x_collision; // get the distance
-			d->cast_rays.flag = 1; // flag for the wall
+			d->cast_rays.distance = x_collision;
+			d->cast_rays.flag = 1;
 		}
-		render_walls(d, ray);
+		render_scene(d, ray);
 		ray++;
 		d->cast_rays.ray_ngl += (d->data_player.fov_radians / WIDTH);
 	}
