@@ -23,7 +23,6 @@
 # define WIDTH				1920
 # define HEIGHT				1080
 # define TILE_SIZE			64
-# define MINIMAP_TILE_SIZE	24
 # define LATERAL_RADIANS	1.570796326794897
 # define FOV				60
 # define M_PI				3.14159265358979323846
@@ -50,6 +49,7 @@ typedef struct s_minimap
 	int	y;
 	int	x_limit;
 	int	y_limit;
+	int	tile_size;
 }	t_minimap;
 
 typedef struct s_rays
@@ -82,19 +82,28 @@ typedef struct s_dda_data
 	int		pixel;
 }	t_dda_data;
 
+typedef struct s_map
+{
+    t_textures		tex;
+    uint32_t		f_color;
+    uint32_t		c_color;
+    int				spawn;
+	int				spawn_x; //old map_x
+	int				spawn_y; //old map_y
+	int				size_x;//tamaño del mapa
+	int				size_y;//tamaño del mapa
+    char    		**map;
+}   t_map;
+
 typedef struct s_data
 {
 	mlx_t			*mlx;
 	mlx_image_t		*image;
+	mlx_image_t		*n_image;
 	t_data_player	data_player;
 	t_rays			cast_rays;
-	t_textures		tex;
-	t_minimap		minmap;
-	char			**map;
-	int				map_x;
-	int				map_y;
-	int				size_x;//tamaño del mapa
-	int				size_y;//tamaño del mapa
+	t_minimap		minimap;
+	t_map			map;
 }	t_data;
 
 int				get_rgba(int r, int g, int b, int a);
@@ -117,7 +126,7 @@ void			ft_movement_hook(t_data *d);
 
 void			ft_move_player(t_data *d);
 
-void			ft_free_map(char **map);
+void			ft_free_map(t_map *map);
 
 void			safe_pixel_put(mlx_image_t *image, int x, int y, int color);
 
@@ -126,8 +135,6 @@ double			get_h_inter(t_data *d, double angl);
 double			get_v_inter(t_data *d, double angl);
 
 void			check_side(t_data *d, double angle);
-
-void			ft_get_size_map(t_data *d, char **map);
 
 void			ft_mlx_error(void);
 
@@ -141,5 +148,11 @@ void			ft_draw_minimap(t_data *d, int y, int x);
 void			ft_draw_square(mlx_image_t *image, t_minimap *map, int color);
 
 void			ft_esc(void *param);
+
+int ft_parse_input(int argc, char **argv, t_map *map);
+
+int	ft_load_mapdata(t_map *map, char *line);
+
+void	ft_search_replace(char *str, char og, char new);
 
 #endif

@@ -66,16 +66,16 @@ mlx_texture_t	*get_texture_walls(t_data *d, int flag)
 	if (flag == 0)
 	{
 		if (d->data_player.west == true)
-			return (d->tex.we);
+			return (d->map.tex.we);
 		else
-			return (d->tex.ea);
+			return (d->map.tex.ea);
 	}
 	else
 	{
 		if (d->data_player.south == true)
-			return (d->tex.so);
+			return (d->map.tex.so);
 		else
-			return (d->tex.no);
+			return (d->map.tex.no);
 	}
 }
 /**
@@ -101,7 +101,7 @@ void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double wall_h)
 	double			factor;
 
 	texture = get_texture_walls(d, d->cast_rays.flag);
-	d->tex.arr = (unsigned int *)texture->pixels;
+	d->map.tex.arr = (unsigned int *)texture->pixels;
 	factor = (double)texture->height / wall_h;
 	if (d->cast_rays.flag == 1)
 		x_o = (uint32_t)fmodf((d->cast_rays.wall_hit_x_horizontal \
@@ -115,8 +115,8 @@ void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double wall_h)
 	while (top_pix < bottom_pix)
 	{
 		if ((uint32_t)y_o < texture->height && (uint32_t)x_o < texture->width)
-			safe_pixel_put(d->image, d->cast_rays.index, top_pix, \
-			reverse_bytes(d->tex.arr[(int)y_o * texture->width + (int)x_o]));
+			safe_pixel_put(d->n_image, d->cast_rays.index, top_pix, \
+			reverse_bytes(d->map.tex.arr[(int)y_o * texture->width + (int)x_o]));
 		y_o += factor;
 		top_pix++;
 	}
@@ -141,8 +141,8 @@ void	draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix)
 
 	i = b_pix;
 	while (i < HEIGHT)
-		safe_pixel_put(d->image, ray, i++, get_rgba(189, 181, 125, 255));
+		safe_pixel_put(d->n_image, ray, i++, get_rgba(189, 181, 125, 255));
 	i = 0;
 	while (i < t_pix)
-		safe_pixel_put(d->image, ray, i++, get_rgba(255, 255, 255, 255));
+		safe_pixel_put(d->n_image, ray, i++, get_rgba(255, 255, 255, 255));
 }

@@ -31,3 +31,40 @@ int	reverse_bytes(int c)
 	b |= (c & 0xFF000000) >> 24;
 	return (b);
 }
+
+//libera el mapa
+void    ft_free_map(t_map *map)
+{
+	int	i;
+
+	if (map->tex.no)
+		mlx_delete_texture(map->tex.no);
+	if (map->tex.so)
+		mlx_delete_texture(map->tex.so);
+	if (map->tex.we)
+		mlx_delete_texture(map->tex.we);
+	if (map->tex.ea)
+		mlx_delete_texture(map->tex.ea);
+	if (map->map)
+	{
+		i = 0;
+		while (map->map[i])
+		{
+			free (map->map[i]);
+			i++;
+		}
+		free(map->map);
+	}
+}
+
+void	ft_search_replace(char *str, char og, char new)
+{
+	int	len;
+
+	len = ft_strlen(str);
+	while (--len)
+	{
+		if (str[len] == og)
+			str[len] = new;
+	}
+}

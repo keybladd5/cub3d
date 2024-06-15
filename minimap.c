@@ -53,13 +53,13 @@ void	ft_draw_square(mlx_image_t *image, t_minimap *map, int color)
  * @param ply Pointer to the player's data structure containing 
  * position information.
  */
-static void	ft_draw_minmap_player(mlx_image_t *image, \
+static void	ft_draw_minimap_player(mlx_image_t *image, \
 t_minimap *map, int color, t_data_player *ply)
 {
-	map->x = (ply->x / TILE_SIZE) * MINIMAP_TILE_SIZE;
-	map->x_limit = map->x + MINIMAP_TILE_SIZE;
-	map->y = (ply->y / TILE_SIZE) * MINIMAP_TILE_SIZE;
-	map->y_limit = map->y + MINIMAP_TILE_SIZE;
+	map->x = (ply->x / TILE_SIZE) * map->tile_size;
+	map->x_limit = map->x + map->tile_size;
+	map->y = (ply->y / TILE_SIZE) * map->tile_size;
+	map->y_limit = map->y + map->tile_size;
 	ft_draw_square(image, map, color);
 }
 /**
@@ -75,29 +75,29 @@ t_minimap *map, int color, t_data_player *ply)
  */
 void	ft_draw_minimap(t_data *d, int y, int x)
 {
-	d->minmap.x = 0;
-	d->minmap.x_limit = d->size_x * MINIMAP_TILE_SIZE;
-	d->minmap.y = 0;
-	d->minmap.y_limit = d->size_y * MINIMAP_TILE_SIZE;
-	ft_draw_square(d->image, &(d->minmap), get_rgba(0, 0, 0, 255));
-	d->minmap.y_limit = MINIMAP_TILE_SIZE;
-	while (y < d->size_y)
+	d->minimap.x = 0;
+	d->minimap.x_limit = d->map.size_x * d->minimap.tile_size;
+	d->minimap.y = 0;
+	d->minimap.y_limit = d->map.size_y * d->minimap.tile_size;
+	ft_draw_square(d->n_image, &(d->minimap), get_rgba(0, 0, 0, 255));
+	d->minimap.y_limit = d->minimap.tile_size;
+	while (y < d->map.size_y)
 	{
 		x = 0;
-		d->minmap.x = 0;
-		d->minmap.x_limit = MINIMAP_TILE_SIZE;
-		while (x < d->size_x)
+		d->minimap.x = 0;
+		d->minimap.x_limit = d->minimap.tile_size;
+		while (d->map.map[y][x])
 		{
-			if (d->map[y][x] == '1')
-				ft_draw_square(d->image, &(d->minmap), 0xFFFFFFFF);
+			if (d->map.map[y][x] == '1')
+				ft_draw_square(d->n_image, &(d->minimap), 0xFFFFFFFF);
 			x++;
-			d->minmap.x += MINIMAP_TILE_SIZE;
-			d->minmap.x_limit += MINIMAP_TILE_SIZE;
+			d->minimap.x += d->minimap.tile_size;
+			d->minimap.x_limit += d->minimap.tile_size;
 		}
 		y++;
-		d->minmap.y += MINIMAP_TILE_SIZE;
-		d->minmap.y_limit += MINIMAP_TILE_SIZE;
+		d->minimap.y += d->minimap.tile_size;
+		d->minimap.y_limit += d->minimap.tile_size;
 	}
-	ft_draw_minmap_player(d->image, &(d->minmap), \
+	ft_draw_minimap_player(d->n_image, &(d->minimap), \
 	get_rgba(39, 245, 54, 255), &(d->data_player));
 }

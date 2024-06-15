@@ -22,12 +22,8 @@ void	ft_esc(void *param)
 	t_data	*d;
 
 	d = param;
-	ft_free_map(d->map);
+	ft_free_map(&d->map);
 	mlx_delete_image(d->mlx, d->image);
-	mlx_delete_texture(d->tex.ea);
-	mlx_delete_texture(d->tex.no);
-	mlx_delete_texture(d->tex.so);
-	mlx_delete_texture(d->tex.we);
 	mlx_close_window(d->mlx);
 	exit(0);
 }
@@ -79,7 +75,6 @@ void	ft_movement_hook(t_data	*d)
 	* d->data_player.speed_turn_on);
 	d->data_player.angle_rotation = nor_angle(d->data_player.angle_rotation);
 	ft_move_player(d);
-	ft_cast_rays(d);
 	if (d->data_player.advance != 0)
 		d->data_player.advance = 0;
 	if (d->data_player.turn_on != 0)

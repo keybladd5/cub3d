@@ -52,12 +52,12 @@ int	collider_checker(t_data *d, double y, double x)
 		return (0);
 	x_m = floor(x  / TILE_SIZE);
 	y_m = floor(y  / TILE_SIZE);
-	if (y_m  >= d->size_y || x_m >= d->size_x)
+	if (y_m  >= d->map.size_y || x_m >= d->map.size_x)
 		return (0);
 	if (x_m < 0 || y_m < 0)
 		return (0);
-	if (d->map[y_m] && x_m <= (int)ft_strlen(d->map[y_m]))
-		if (d->map[y_m][x_m] == '1')
+	if (d->map.map[y_m] && x_m <= (int)ft_strlen(d->map.map[y_m]))
+		if (d->map.map[y_m][x_m] == '1')
 			return (0);
 	return (1);
 }
