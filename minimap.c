@@ -44,6 +44,7 @@ void	ft_draw_square(mlx_image_t *image, t_minimap *map, int color)
 		y++;
 	}
 }
+
 /**
  * Draws the player's position indicator on the minimap.
  * 
@@ -62,6 +63,7 @@ t_minimap *map, int color, t_data_player *ply)
 	map->y_limit = map->y + map->tile_size;
 	ft_draw_square(image, map, color);
 }
+
 /**
  * Draws the minimap based on the game map data onto 
  * the specified image buffer.

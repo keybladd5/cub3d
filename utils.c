@@ -33,7 +33,7 @@ int	reverse_bytes(int c)
 }
 
 //libera el mapa
-void    ft_free_map(t_map *map)
+void	ft_free_map(t_map *map)
 {
 	int	i;
 

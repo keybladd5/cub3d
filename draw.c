@@ -28,6 +28,7 @@ int	get_rgba(int r, int g, int b, int a)
 {
 	return (r << 24 | g << 16 | b << 8 | a);
 }
+
 /**
  * Safely puts a pixel of the specified color onto 
  * the image buffer at the given coordinates (x, y).
@@ -37,7 +38,8 @@ int	get_rgba(int r, int g, int b, int a)
  * @param image Pointer to the image buffer (mlx_image_t structure).
  * @param x X-coordinate of the pixel.
  * @param y Y-coordinate of the pixel.
- * @param color Color value to be placed at the specified coordinates (RGBA format).
+ * @param color Color value to be placed at the specified coordinates 
+ * (RGBA format).
  */
 void	safe_pixel_put(mlx_image_t *image, int x, int y, int color)
 {
