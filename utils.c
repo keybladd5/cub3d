@@ -55,31 +55,3 @@ char	*ft_skip_spaces(char *str)
 		str++;
 	return (str);
 }
-
-int	ft_error(int type)
-{
-	ft_putstr_fd("Error\n", 2);
-	if (type == ERROR_ARG)
-		ft_putstr_fd("Wrong argument correct format is ./cub3d file.cub\n", 2);
-	else if (type == ERROR_OPEN)
-		ft_putstr_fd("Unable to open specified scene file\n", 2);
-	else if (type == ERROR_TEX_BG)
-		ft_putstr_fd("Missing texture/background data\n", 2);
-	else if (type == ERROR_EMPTY_LINE)
-		ft_putstr_fd("Empty line found in map\n", 2);
-	else if (type == ERROR_CHAR)
-		ft_putstr_fd("Unexpected character found in map\n", 2);
-	else if (type == ERROR_SPAWN)
-		ft_putstr_fd("Multiple spawn points found in map\n", 2);
-	else if (type == ERROR_NO_SPAWN)
-		ft_putstr_fd("Unexpected character found in map\n", 2);
-	else if (type == ERROR_MAP_SURROUND)
-		ft_putstr_fd("Map not fully enclosed\n", 2);
-	else if (type == ERROR_DATA)
-		ft_putstr_fd("Unexpeced data found in scene file\n", 2);
-	else if (type == ERROR_DUP_DATA)
-		ft_putstr_fd("Duplicate scene data found\n", 2);
-	else if (type == ERROR_RGBA)
-		ft_putstr_fd("Wrong color format must be R,G,B in range[0,255]\n", 2);
-	return (1);
-}

@@ -29,7 +29,7 @@
 # define ERROR_ARG			5
 # define ERROR_OPEN			6
 # define ERROR_TEX_BG		7
-# define ERROR_EMPTY_LINE	8
+# define ERROR_NL			8
 # define ERROR_CHAR			9
 # define ERROR_SPAWN		10
 # define ERROR_NO_SPAWN		11
@@ -38,9 +38,8 @@
 # define ERROR_DUP_DATA		14
 # define ERROR_RGBA			15
 
-
-
 typedef uint32_t	t_32;
+
 typedef struct s_data_player
 {
 	int		advance;
@@ -120,6 +119,8 @@ typedef struct s_data
 	t_map			map;
 }	t_data;
 
+/*****<MAIN>*****/
+
 int				get_rgba(int r, int g, int b, int a);
 
 int				collider_checker(t_data *d, double x, double y);
@@ -150,8 +151,6 @@ double			get_v_inter(t_data *d, double angl);
 
 void			check_side(t_data *d, double angle);
 
-void			ft_mlx_error(void);
-
 void			draw_wall_texture(t_data *d, int t_pix, int b_pix, \
 double wall_h);
 
@@ -176,5 +175,11 @@ int				ft_read_texture(t_map *map, char *line);
 int	ft_parse_mapdata(char **line, int scenefd, t_map *map);
 
 int	ft_parse_map(char **line, int scenefd, t_map *map);
+
+void	init_data_map(t_data *d);
+
+void	init_data_player(t_data *d);
+
+int	ft_parse_error(int type);
 
 #endif

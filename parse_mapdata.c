@@ -79,10 +79,9 @@ int	ft_load_mapdata(t_map *map, char *line)
 {
 	char	c_or_f;
 
-	while (ft_isspace(*line) && *line != '\n')
-		line++;
+	line = ft_skip_spaces(line);
 	if (ft_check_dupdata(map, line))
-		return (ft_putstr_fd("Error\nDuplicate scene data found\n", 2), 1);
+		return (ft_parse_error(ERROR_DUP_DATA));
 	if (!ft_strncmp(line, "NO", 2) || !ft_strncmp(line, "SO", 2) \
 	|| !ft_strncmp(line, "WE", 2) || !ft_strncmp(line, "EA", 2))
 	{
@@ -93,14 +92,15 @@ int	ft_load_mapdata(t_map *map, char *line)
 	{
 		c_or_f = *line;
 		if (ft_load_bg(map, ft_skip_spaces(++line), c_or_f))
-			return (ft_putstr_fd("Error\nWrong Floor/Ceiling color format. Must be R,G,B in range [0,255]\n", 2), 1);
+			return (ft_parse_error(ERROR_RGBA));
 	}
 	else
-		return (ft_putstr_fd("Error\nUnexpeced data found in scene file\n", 2), 1);
+		return (ft_parse_error(ERROR_DATA));
 	return (0);
 }
 
-// GNL loop until all data has been found or start of the map, then verify all data is present and skip empty lines
+// GNL loop until all data has been found or start of the map, 
+//then verify all data is present and skip empty lines
 int	ft_parse_mapdata(char **line, int scenefd, t_map *map)
 {
 	int		data_count;
@@ -117,9 +117,10 @@ int	ft_parse_mapdata(char **line, int scenefd, t_map *map)
 		free(*line);
 		*line = get_next_line(scenefd);
 	}
-	if (!map->tex.no || !map->tex.so || !map->tex.we || !map->tex.ea || !map->f_color || !map->c_color)
-		return (ft_putstr_fd("Error\nMissing texture/background data\n", 2), 1);
-	while(*line && (*line[0] == '\n'))
+	if (!map->tex.no || !map->tex.so || !map->tex.we || \
+	!map->tex.ea || !map->f_color || !map->c_color)
+		return (ft_parse_error(ERROR_TEX_BG));
+	while (*line && (*line[0] == '\n'))
 	{
 		free(*line);
 		*line = get_next_line(scenefd);
