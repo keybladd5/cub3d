@@ -30,6 +30,26 @@ int	get_rgba(int r, int g, int b, int a)
 }
 
 /**
+ * Reverses the bytes of a 32-bit integer.
+ * Takes an integer and swaps its bytes to convert between 
+ * little-endian and big-endian formats.
+ *
+ * @param c The 32-bit integer whose bytes are to be reversed.
+ * @return The 32-bit integer with its bytes reversed.
+ */
+int	reverse_bytes(int c)
+{
+	unsigned int	b;
+
+	b = 0;
+	b |= (c & 0xFF) << 24;
+	b |= (c & 0xFF00) << 8;
+	b |= (c & 0xFF0000) >> 8;
+	b |= (c & 0xFF000000) >> 24;
+	return (b);
+}
+
+/**
  * Safely puts a pixel of the specified color onto 
  * the image buffer at the given coordinates (x, y).
  * Coordinates outside the bounds of the image buffer 
@@ -48,37 +68,6 @@ void	safe_pixel_put(mlx_image_t *image, int x, int y, int color)
 	if (y < 0 || y >= HEIGHT)
 		return ;
 	mlx_put_pixel(image, x, y, color);
-}
-
-/**
- * Selects and returns the appropriate texture for 
- * rendering walls based on the direction
- * indicated by the flag. If flag is 0, selects 
- * between east and west textures; if flag is 1,
- * selects between south and north textures.
- *
- * @param d Pointer to the main data structure containing
- *  scene and graphics information.
- * @param flag Flag indicating the direction of the wall 
- * texture to select (0 for east/west, 1 for south/north).
- * @return Pointer to the selected texture.
- */
-mlx_texture_t	*get_texture_walls(t_data *d, int flag)
-{
-	if (flag == 0)
-	{
-		if (d->data_player.west == true)
-			return (d->map.tex.we);
-		else
-			return (d->map.tex.ea);
-	}
-	else
-	{
-		if (d->data_player.south == true)
-			return (d->map.tex.so);
-		else
-			return (d->map.tex.no);
-	}
 }
 
 /**
