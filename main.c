@@ -58,7 +58,6 @@ int	main(int argc, char **argv)
 {
 	t_data	d;
 
-	//parte a sustituir con la version del ales
 	if (ft_parse_input(argc, argv, &d.map))
 		return(EXIT_FAILURE);
 

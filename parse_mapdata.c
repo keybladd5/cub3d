@@ -78,10 +78,10 @@ int	ft_load_bg(t_map *map, char *line)
 		line++;
 	ft_search_replace(line, '\n', '\0');
 	if (ft_check_rgb(line))
-		return (1);//Error msg
+		return (1);
 	rgb = ft_split(line, ',');
 	if (!rgb)
-		return (1);//Error msg
+		return (1);
 	i = 0;
 	while (i < 3)
 	{
@@ -108,6 +108,7 @@ int	ft_check_dupdata(t_map *map, char *line)
 		return (1);
 	return (0);
 }
+
 int	ft_load_mapdata(t_map *map, char *line)
 {
 	while (ft_isspace(*line) && *line != '\n')
@@ -126,5 +127,32 @@ int	ft_load_mapdata(t_map *map, char *line)
 	}
 	else
 		return (ft_putstr_fd("Error\nUnexpeced data found in scene file\n", 2), 1);
+	return (0);
+}
+
+// GNL loop until all data has been found or start of the map, then verify all data is present and skip empty lines
+int	ft_parse_mapdata(char **line, int scenefd, t_map *map)
+{
+	int		data_count;
+
+	data_count = 0;
+	while (*line && data_count < 6 && *line[0] != '1' && *line[0] != '0')
+	{
+		if (*line[0] != '\n')
+		{
+			if (ft_load_mapdata(map, *line))
+				return (1);
+			data_count++;
+		}
+		free(*line);
+		*line = get_next_line(scenefd);
+	}
+	if (!map->tex.no || !map->tex.so || !map->tex.we || !map->tex.ea || !map->f_color || !map->c_color)
+		return (ft_putstr_fd("Error\nMissing texture/background data\n", 2), 1);
+	while(*line && (*line[0] == '\n'))
+	{
+		free(*line);
+		*line = get_next_line(scenefd);
+	}
 	return (0);
 }

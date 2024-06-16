@@ -156,4 +156,8 @@ int	ft_load_mapdata(t_map *map, char *line);
 
 void	ft_search_replace(char *str, char og, char new);
 
+int	ft_parse_mapdata(char **line, int scenefd, t_map *map);
+
+int	ft_parse_map(char **line, int scenefd, t_map *map);
+
 #endif
