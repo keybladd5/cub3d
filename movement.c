@@ -25,6 +25,7 @@ void	ft_esc(void *param)
 	ft_free_map(&d->map);
 	mlx_delete_image(d->mlx, d->image);
 	mlx_close_window(d->mlx);
+	mlx_terminate(d->mlx);
 	exit(0);
 }
 
@@ -84,6 +85,7 @@ void	ft_movement_hook(t_data	*d)
 	if (d->data_player.speed_advance == 8.0)
 		d->data_player.speed_advance = 4.0;
 }
+
 /**
  * Moves the player based on current movement 
  * commands and updates position.

@@ -26,9 +26,9 @@
  * @param h Pointer to a structure that will store the DDA data for 
  * horizontal intersections.
  */
-static void    aux_get_h_inter(t_data *d, double angl, t_dda_data *h)
+static void	aux_get_h_inter(t_data *d, double angl, t_dda_data *h)
 {
-    h->y_step = TILE_SIZE;
+	h->y_step = TILE_SIZE;
 	h->x_step = TILE_SIZE / tan(angl);
 	h->dda_y = floor(d->data_player.y / TILE_SIZE) * TILE_SIZE;
 	check_side(d, nor_angle(angl));
@@ -44,7 +44,7 @@ static void    aux_get_h_inter(t_data *d, double angl, t_dda_data *h)
 	}
 	h->dda_x = d->data_player.x + (h->dda_y - d->data_player.y) / tan(angl);
 	if ((d->data_player.west == true && h->x_step > 0) \
-    || (d->data_player.west == false && h->x_step < 0))
+	|| (d->data_player.west == false && h->x_step < 0))
 		h->x_step *= -1;
 }
 

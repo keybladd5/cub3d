@@ -31,7 +31,6 @@ void	ft_game_loop(void *param)
 	ft_movement_hook(d);
 	ft_cast_rays(d);
 	ft_draw_minimap(d, 0, 0);
-
 	mlx_delete_image(d->mlx, d->image);
 	d->image = d->n_image;
 	mlx_image_to_window(d->mlx, d->image, 0, 0);
@@ -50,7 +49,6 @@ void	init_data_player(t_data *d)
 	d->data_player.lateral_move = 0;
 	d->data_player.west = false;
 	d->data_player.south = false;
-
 	if ((WIDTH * 0.25 / d->map.size_x) < (HEIGHT * 0.25 / d->map.size_y))
 		d->minimap.tile_size = WIDTH * 0.25 / d->map.size_x;
 	else

@@ -50,9 +50,9 @@ int	collider_checker(t_data *d, double y, double x)
 
 	if (x < 0.0 || y < 0.0)
 		return (0);
-	x_m = floor(x  / TILE_SIZE);
-	y_m = floor(y  / TILE_SIZE);
-	if (y_m  >= d->map.size_y || x_m >= d->map.size_x)
+	x_m = floor(x / TILE_SIZE);
+	y_m = floor(y / TILE_SIZE);
+	if (y_m >= d->map.size_y || x_m >= d->map.size_x)
 		return (0);
 	if (x_m < 0 || y_m < 0)
 		return (0);
@@ -98,7 +98,6 @@ void render_scene(t_data *d, int ray)
 	double	wall_h;
 	double	bottom_pix;
 	double	top_pix;
-
 
 	d->cast_rays.distance *= cos(nor_angle\
 	(d->cast_rays.ray_ngl - d->data_player.angle_rotation));

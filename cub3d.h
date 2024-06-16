@@ -27,6 +27,7 @@
 # define FOV				60
 # define M_PI				3.14159265358979323846
 
+typedef uint32_t	t_32;
 typedef struct s_data_player
 {
 	int		advance;

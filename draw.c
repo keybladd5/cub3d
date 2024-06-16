@@ -78,6 +78,7 @@ mlx_texture_t	*get_texture_walls(t_data *d, int flag)
 			return (d->map.tex.no);
 	}
 }
+
 /**
  * Draws a textured wall on the screen between the 
  * specified top and bottom pixels.
@@ -97,26 +98,26 @@ void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double wall_h)
 {
 	double			x_o;
 	double			y_o;
-	mlx_texture_t	*texture;
+	mlx_texture_t	*tex;
 	double			factor;
 
-	texture = get_texture_walls(d, d->cast_rays.flag);
-	d->map.tex.arr = (unsigned int *)texture->pixels;
-	factor = (double)texture->height / wall_h;
+	tex = get_texture_walls(d, d->cast_rays.flag);
+	d->map.tex.arr = (unsigned int *)tex->pixels;
+	factor = (double)tex->height / wall_h;
 	if (d->cast_rays.flag == 1)
-		x_o = (uint32_t)fmodf((d->cast_rays.wall_hit_x_horizontal \
-		* (texture->width / TILE_SIZE)), texture->width);
+		x_o = (t_32)fmodf((d->cast_rays.wall_hit_x_horizontal \
+		* (tex->width / TILE_SIZE)), tex->width);
 	else
-		x_o = (uint32_t)fmodf((d->cast_rays.wall_hit_y_vertical \
-		* (texture->width / TILE_SIZE)), texture->width);
+		x_o = (t_32)fmodf((d->cast_rays.wall_hit_y_vertical \
+		* (tex->width / TILE_SIZE)), tex->width);
 	y_o = (top_pix - (HEIGHT >> 1) + (wall_h * 0.5)) * factor;
 	if (y_o < 0)
 		y_o = 0;
 	while (top_pix < bottom_pix)
 	{
-		if ((uint32_t)y_o < texture->height && (uint32_t)x_o < texture->width)
+		if ((t_32)y_o < tex->height && (t_32)x_o < tex->width)
 			safe_pixel_put(d->n_image, d->cast_rays.index, top_pix, \
-			reverse_bytes(d->map.tex.arr[(int)y_o * texture->width + (int)x_o]));
+			reverse_bytes(d->map.tex.arr[(t_32)y_o * tex->width + (t_32)x_o]));
 		y_o += factor;
 		top_pix++;
 	}
@@ -141,8 +142,8 @@ void	draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix)
 
 	i = b_pix;
 	while (i < HEIGHT)
-		safe_pixel_put(d->n_image, ray, i++, get_rgba(189, 181, 125, 255));
+		safe_pixel_put(d->n_image, ray, i++, d->map.f_color);
 	i = 0;
 	while (i < t_pix)
-		safe_pixel_put(d->n_image, ray, i++, get_rgba(255, 255, 255, 255));
+		safe_pixel_put(d->n_image, ray, i++, d->map.c_color);
 }
