@@ -93,17 +93,17 @@ void	check_side(t_data *d, double angle)
  * scene and player information.
  * @param ray Index of the current ray being rendered.
  */
-void render_scene(t_data *d, int ray)
+void	render_scene(t_data *d, int ray)
 {
 	double	wall_h;
 	double	bottom_pix;
 	double	top_pix;
 
-	d->cast_rays.distance *= cos(nor_angle\
+	d->cast_rays.distance *= cos(nor_angle \
 	(d->cast_rays.ray_ngl - d->data_player.angle_rotation));
 	wall_h = (TILE_SIZE / d->cast_rays.distance) * \
 	((WIDTH >> 1) / tan(d->data_player.fov_radians * 0.5));
-	bottom_pix = (HEIGHT >> 1) + (wall_h  * 0.5);
+	bottom_pix = (HEIGHT >> 1) + (wall_h * 0.5);
 	top_pix = (HEIGHT >> 1) - (wall_h * 0.5);
 	if (bottom_pix > HEIGHT)
 		bottom_pix = HEIGHT;

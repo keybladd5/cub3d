@@ -12,28 +12,8 @@
 
 #include "cub3d.h"
 
-/**
- * Reverses the bytes of a 32-bit integer.
- * Takes an integer and swaps its bytes to convert between 
- * little-endian and big-endian formats.
- *
- * @param c The 32-bit integer whose bytes are to be reversed.
- * @return The 32-bit integer with its bytes reversed.
- */
-int	reverse_bytes(int c)
-{
-	unsigned int	b;
-
-	b = 0;
-	b |= (c & 0xFF) << 24;
-	b |= (c & 0xFF00) << 8;
-	b |= (c & 0xFF0000) >> 8;
-	b |= (c & 0xFF000000) >> 24;
-	return (b);
-}
-
 //libera el mapa
-void    ft_free_map(t_map *map)
+void	ft_free_map(t_map *map)
 {
 	int	i;
 
@@ -67,4 +47,39 @@ void	ft_search_replace(char *str, char og, char new)
 		if (str[len] == og)
 			str[len] = new;
 	}
+}
+
+char	*ft_skip_spaces(char *str)
+{
+	while (ft_isspace(*str) && *str != '\n')
+		str++;
+	return (str);
+}
+
+int	ft_error(int type)
+{
+	ft_putstr_fd("Error\n", 2);
+	if (type == ERROR_ARG)
+		ft_putstr_fd("Wrong argument correct format is ./cub3d file.cub\n", 2);
+	else if (type == ERROR_OPEN)
+		ft_putstr_fd("Unable to open specified scene file\n", 2);
+	else if (type == ERROR_TEX_BG)
+		ft_putstr_fd("Missing texture/background data\n", 2);
+	else if (type == ERROR_EMPTY_LINE)
+		ft_putstr_fd("Empty line found in map\n", 2);
+	else if (type == ERROR_CHAR)
+		ft_putstr_fd("Unexpected character found in map\n", 2);
+	else if (type == ERROR_SPAWN)
+		ft_putstr_fd("Multiple spawn points found in map\n", 2);
+	else if (type == ERROR_NO_SPAWN)
+		ft_putstr_fd("Unexpected character found in map\n", 2);
+	else if (type == ERROR_MAP_SURROUND)
+		ft_putstr_fd("Map not fully enclosed\n", 2);
+	else if (type == ERROR_DATA)
+		ft_putstr_fd("Unexpeced data found in scene file\n", 2);
+	else if (type == ERROR_DUP_DATA)
+		ft_putstr_fd("Duplicate scene data found\n", 2);
+	else if (type == ERROR_RGBA)
+		ft_putstr_fd("Wrong color format must be R,G,B in range[0,255]\n", 2);
+	return (1);
 }

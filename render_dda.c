@@ -63,7 +63,7 @@ static void	aux_get_h_inter(t_data *d, double angl, t_dda_data *h)
  */
 double	get_h_inter(t_data *d, double angl)
 {
-	t_dda_data  h;
+	t_dda_data	h;
 
 	aux_get_h_inter(d, angl, &h);
 	while (collider_checker(d, h.dda_y - h.pixel, h.dda_x))
@@ -74,8 +74,9 @@ double	get_h_inter(t_data *d, double angl)
 	d->cast_rays.wall_hit_x_horizontal = h.dda_x;
 	d->cast_rays.wall_hit_y_horizontal = h.dda_y;
 	return (sqrt(pow(h.dda_x - d->data_player.x, 2) \
-    + pow(h.dda_y - d->data_player.y, 2)));
+	+ pow(h.dda_y - d->data_player.y, 2)));
 }
+
 /**
  * Initializes DDA (Digital Differential Analyzer) 
  * data for vertical intersections.
@@ -90,9 +91,9 @@ double	get_h_inter(t_data *d, double angl)
  * @param v Pointer to a structure that will 
  * store the DDA data for vertical intersections.
  */
-static void    aux_get_v_inter(t_data *d, double angl, t_dda_data *v)
+static void	aux_get_v_inter(t_data *d, double angl, t_dda_data *v)
 {
-    v->x_step = TILE_SIZE;
+	v->x_step = TILE_SIZE;
 	v->y_step = TILE_SIZE * tan(angl);
 	v->dda_x = floor(d->data_player.x / TILE_SIZE) * TILE_SIZE;
 	check_side(d, nor_angle(angl));
@@ -108,7 +109,7 @@ static void    aux_get_v_inter(t_data *d, double angl, t_dda_data *v)
 	}
 	v->dda_y = d->data_player.y + (v->dda_x - d->data_player.x) * tan(angl);
 	if ((d->data_player.south == true && v->y_step < 0) \
-    || (d->data_player.south == false && v->y_step > 0))
+	|| (d->data_player.south == false && v->y_step > 0))
 		v->y_step *= -1;
 }
 
@@ -128,8 +129,9 @@ static void    aux_get_v_inter(t_data *d, double angl, t_dda_data *v)
  */
 double	get_v_inter(t_data *d, double angl)
 {
-    t_dda_data  v;
-    aux_get_v_inter(d, angl, &v);
+	t_dda_data	v;
+
+	aux_get_v_inter(d, angl, &v);
 	while (collider_checker(d, v.dda_y, v.dda_x - v.pixel))
 	{
 		v.dda_x += v.x_step;
@@ -138,6 +140,5 @@ double	get_v_inter(t_data *d, double angl)
 	d->cast_rays.wall_hit_x_vertical = v.dda_x;
 	d->cast_rays.wall_hit_y_vertical = v.dda_y;
 	return (sqrt(pow(v.dda_x - d->data_player.x, 2) + \
-    pow(v.dda_y - d->data_player.y, 2)));
+	pow(v.dda_y - d->data_player.y, 2)));
 }
-

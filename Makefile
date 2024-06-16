@@ -16,7 +16,8 @@ CC		=	gcc
 
 L_FLAGS =	-Wall -Wextra -Werror -MMD -g  #-fsanitize=address
 
-SRC	=	main.c draw.c render.c movement.c minimap.c render_dda.c utils.c parse.c parse_mapdata.c parse_map.c
+SRC	=	main.c draw.c render.c movement.c minimap.c render_dda.c utils.c parse.c parse_mapdata.c parse_map.c \
+		textures.c
 
 OBJ		=	$(SRC:.c=.o)
 

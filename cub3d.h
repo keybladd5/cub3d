@@ -26,6 +26,19 @@
 # define LATERAL_RADIANS	1.570796326794897
 # define FOV				60
 # define M_PI				3.14159265358979323846
+# define ERROR_ARG			5
+# define ERROR_OPEN			6
+# define ERROR_TEX_BG		7
+# define ERROR_EMPTY_LINE	8
+# define ERROR_CHAR			9
+# define ERROR_SPAWN		10
+# define ERROR_NO_SPAWN		11
+# define ERROR_MAP_SURROUND	12
+# define ERROR_DATA			13
+# define ERROR_DUP_DATA		14
+# define ERROR_RGBA			15
+
+
 
 typedef uint32_t	t_32;
 typedef struct s_data_player
@@ -85,16 +98,16 @@ typedef struct s_dda_data
 
 typedef struct s_map
 {
-    t_textures		tex;
-    uint32_t		f_color;
-    uint32_t		c_color;
-    int				spawn;
-	int				spawn_x; //old map_x
-	int				spawn_y; //old map_y
-	int				size_x;//tamaño del mapa
-	int				size_y;//tamaño del mapa
-    char    		**map;
-}   t_map;
+	t_textures	tex;
+	uint32_t	f_color;
+	uint32_t	c_color;
+	int			spawn;
+	int			spawn_x; //old map_x
+	int			spawn_y; //old map_y
+	int			size_x;//tamaño del mapa
+	int			size_y;//tamaño del mapa
+	char		**map;
+}	t_map;
 
 typedef struct s_data
 {
@@ -150,11 +163,15 @@ void			ft_draw_square(mlx_image_t *image, t_minimap *map, int color);
 
 void			ft_esc(void *param);
 
-int ft_parse_input(int argc, char **argv, t_map *map);
+int				ft_parse_input(int argc, char **argv, t_map *map);
 
-int	ft_load_mapdata(t_map *map, char *line);
+int				ft_load_mapdata(t_map *map, char *line);
 
-void	ft_search_replace(char *str, char og, char new);
+void			ft_search_replace(char *str, char og, char new);
+
+char			*ft_skip_spaces(char *str);
+
+int				ft_read_texture(t_map *map, char *line);
 
 int	ft_parse_mapdata(char **line, int scenefd, t_map *map);
 
