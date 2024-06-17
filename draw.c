@@ -83,9 +83,9 @@ void	safe_pixel_put(mlx_image_t *image, int x, int y, int color)
  * scene and graphics information.
  * @param top_pix Top pixel index where the wall starts on the screen.
  * @param bottom_pix Bottom pixel index where the wall ends on the screen.
- * @param wall_h Height of the wall on the screen.
+ * @param height_wall Height of the wall on the screen.
  */
-void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double wall_h)
+void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double height_wall)
 {
 	double			x_o;
 	double			y_o;
@@ -94,14 +94,12 @@ void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double wall_h)
 
 	tex = get_texture_walls(d, d->cast_rays.collission);
 	d->map.tex.arr = (unsigned int *)tex->pixels;
-	factor = (double)tex->height / wall_h;
+	factor = ((double)tex->height / height_wall);
 	if (d->cast_rays.collission == HORIZONTAL)
-		x_o = (t_32)fmodf((d->cast_rays.wall_hit_x_horizontal \
-		* (tex->width / TILE_SIZE)), tex->width);
+		x_o = (t_32)fmodf(d->cast_rays.wall_hit_x_horizontal, tex->width);
 	else
-		x_o = (t_32)fmodf((d->cast_rays.wall_hit_y_vertical \
-		* (tex->width / TILE_SIZE)), tex->width);
-	y_o = (top_pix - (HEIGHT >> 1) + (wall_h * 0.5)) * factor;
+		x_o = (t_32)fmodf(d->cast_rays.wall_hit_y_vertical, tex->width);
+	y_o = (top_pix - (HEIGHT >> 1) + (height_wall * 0.5)) * factor;
 	if (y_o < 0)
 		y_o = 0;
 	while (top_pix < bottom_pix)

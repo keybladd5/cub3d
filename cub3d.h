@@ -125,11 +125,11 @@ typedef struct s_data
 
 int				get_rgba(int r, int g, int b, int a);
 
-int				collider_checker(t_data *d, double x, double y);
+int				ft_check_coll(t_data *d, double x, double y);
 
 void			ft_render_scene(t_data *d);
 
-double			nor_angle(double angle);
+double			ft_nor_angle(double angle);
 
 void			draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix);
 
@@ -147,11 +147,11 @@ void			ft_free_map(t_map *map);
 
 void			safe_pixel_put(mlx_image_t *image, int x, int y, int color);
 
-double			get_h_inter(t_data *d, double angl);
+double			ft_get_hinter(t_data *d, double angl);
 
-double			get_v_inter(t_data *d, double angl);
+double			ft_get_vinter(t_data *d, double angl);
 
-void			check_side(t_data *d, double angle);
+void			ft_check_side(t_data *d, double angle);
 
 void			draw_wall_texture(t_data *d, int t_pix, int b_pix, \
 double wall_h);

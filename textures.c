@@ -54,8 +54,8 @@ mlx_texture_t	*ft_load_texture(char *line)
 	p_tex = mlx_load_png(line);
 	if (!p_tex)
 		return (ft_putstr_fd("Error\nUnable to open texture asset\n", 2), NULL);
-	if (p_tex->height != 64 || p_tex->width != 64)
-		return (ft_putstr_fd("Error\nUnable to open texture asset\n", 2), NULL);
+	//if (p_tex->height != 64 || p_tex->width != 64)
+		//return (ft_putstr_fd("Error\nTextures must be 64x64 pixel\n", 2), NULL);
 	return (p_tex);
 }
 
@@ -87,4 +87,3 @@ int	ft_read_texture(t_map *map, char *line)
 	}
 	return (0);
 }
-

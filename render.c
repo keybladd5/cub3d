@@ -13,25 +13,6 @@
 #include "cub3d.h"
 
 /**
- * Normalizes an angle to ensure that it is always in the range 0 to 2π 
- * radians.
- * If the angle is negative, 2π is added to bring it within the range.
- * If the angle is greater than 2π, 2π is subtracted to bring it within 
- * the range.
- *
- * @param angle The angle to be normalized, in radians.
- * @return The normalized angle, in the range [0, 2π) radians.
- */
-double	nor_angle(double angle) // normalize the angle
-{
-	if (angle < 0)
-		angle += (2 * M_PI);
-	if (angle > (2 * M_PI))
-		angle -= (2 * M_PI);
-	return (angle);
-}
-
-/**
  * Checks if a specific position on the map is free of collisions.
  * If the coordinates (x, y) are out of bounds or if the map cell contains
  * a '1' (indicating a wall), it returns 0. Otherwise, it returns 1.
@@ -43,7 +24,7 @@ double	nor_angle(double angle) // normalize the angle
  * @return 0 if the position is out of bounds or collides with a wall,
  *  1 otherwise.
  */
-int	collider_checker(t_data *d, double y, double x)
+int	ft_check_coll(t_data *d, double y, double x)
 {
 	int		x_m;
 	int		y_m;
@@ -54,12 +35,13 @@ int	collider_checker(t_data *d, double y, double x)
 	y_m = floor(y / TILE_SIZE);
 	if (y_m >= d->map.size_y || x_m >= d->map.size_x)
 		return (0);
-	if (x_m < 0 || y_m < 0)
-		return (0);
 	if (d->map.map[y_m] && x_m <= (int)ft_strlen(d->map.map[y_m]))
+	{
 		if (d->map.map[y_m][x_m] == '1')
 			return (0);
-	return (1);
+		return (1);
+	}
+	return (0);
 }
 
 /**
@@ -71,7 +53,7 @@ int	collider_checker(t_data *d, double y, double x)
  * containing player information.
  * @param angle The angle to determine directionality, in radians.
  */
-void	check_side(t_data *d, double angle)
+void	ft_check_side(t_data *d, double angle)
 {
 	if (angle > 0 && angle < M_PI)
 		d->data_player.south = true;
@@ -95,22 +77,24 @@ void	check_side(t_data *d, double angle)
  */
 void	ft_ray_caster(t_data *d, int ray)
 {
-	double	wall_h;
+	double	height_wall;
 	double	bottom_pix;
 	double	top_pix;
 
-	d->cast_rays.distance *= cos(nor_angle \
+	d->cast_rays.distance *= cos(ft_nor_angle \
 	(d->cast_rays.ray_ngl - d->data_player.angle_rotation));
-	wall_h = (TILE_SIZE / d->cast_rays.distance) * \
-	((WIDTH >> 1) / tan(d->data_player.fov_radians * 0.5));
-	bottom_pix = (HEIGHT >> 1) + (wall_h * 0.5);
-	top_pix = (HEIGHT >> 1) - (wall_h * 0.5);
+	if (!d->cast_rays.distance)
+		d->cast_rays.distance = 1;
+	height_wall = (TILE_SIZE / d->cast_rays.distance) * \
+	((WIDTH >> 1) / tan(d->data_player.fov_radians * 0.5)); // punto clave
+	bottom_pix = (HEIGHT >> 1) + (height_wall * 0.5);
+	top_pix = (HEIGHT >> 1) - (height_wall * 0.5);
 	if (bottom_pix > HEIGHT)
 		bottom_pix = HEIGHT;
 	if (top_pix < 0)
 		top_pix = 0;
 	d->cast_rays.index = ray;
-	draw_wall_texture(d, top_pix, bottom_pix, wall_h);
+	draw_wall_texture(d, top_pix, bottom_pix, height_wall);
 	draw_floor_ceiling(d, ray, top_pix, bottom_pix);
 }
 
@@ -132,11 +116,11 @@ void	ft_render_scene(t_data *d)
 	ray = -1;
 	d->cast_rays.ray_ngl = \
 	d->data_player.angle_rotation - (d->data_player.fov_radians * 0.5);
-	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
 	while (++ray < WIDTH)
 	{
-		h_collision = get_h_inter(d, nor_angle(d->cast_rays.ray_ngl));
-		v_collision = get_v_inter(d, nor_angle(d->cast_rays.ray_ngl));
+		d->cast_rays.ray_ngl = ft_nor_angle(d->cast_rays.ray_ngl);
+		h_collision = ft_get_hinter(d, d->cast_rays.ray_ngl);
+		v_collision = ft_get_vinter(d, d->cast_rays.ray_ngl);
 		if (v_collision <= h_collision)
 		{
 			d->cast_rays.distance = v_collision;
@@ -148,6 +132,6 @@ void	ft_render_scene(t_data *d)
 			d->cast_rays.collission = HORIZONTAL;
 		}
 		ft_ray_caster(d, ray);
-		d->cast_rays.ray_ngl += (d->data_player.fov_radians / WIDTH);
+		d->cast_rays.ray_ngl += (d->data_player.fov_radians / WIDTH); //punto clave a repasar
 	}
 }

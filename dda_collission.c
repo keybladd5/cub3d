@@ -26,12 +26,12 @@
  * @param h Pointer to a structure that will store the DDA data for 
  * horizontal intersections.
  */
-static void	aux_get_h_inter(t_data *d, double angl, t_dda_data *h)
+static void	ft_get_hsteps(t_data *d, double angl, t_dda_data *h)
 {
 	h->y_step = TILE_SIZE;
 	h->x_step = TILE_SIZE / tan(angl);
 	h->dda_y = floor(d->data_player.y / TILE_SIZE) * TILE_SIZE;
-	check_side(d, nor_angle(angl));
+	ft_check_side(d, angl);
 	if (d->data_player.south == true)
 	{
 		h->dda_y += TILE_SIZE;
@@ -61,12 +61,12 @@ static void	aux_get_h_inter(t_data *d, double angl, t_dda_data *h)
  * @return The distance from the player to the nearest 
  * horizontal intersection.
  */
-double	get_h_inter(t_data *d, double angl)
+double	ft_get_hinter(t_data *d, double angl)
 {
 	t_dda_data	h;
 
-	aux_get_h_inter(d, angl, &h);
-	while (collider_checker(d, h.dda_y - h.pixel, h.dda_x))
+	ft_get_hsteps(d, angl, &h);
+	while (ft_check_coll(d, h.dda_y - h.pixel, h.dda_x))
 	{
 		h.dda_x += h.x_step;
 		h.dda_y += h.y_step;
@@ -91,12 +91,12 @@ double	get_h_inter(t_data *d, double angl)
  * @param v Pointer to a structure that will 
  * store the DDA data for vertical intersections.
  */
-static void	aux_get_v_inter(t_data *d, double angl, t_dda_data *v)
+static void	ft_get_vsteps(t_data *d, double angl, t_dda_data *v)
 {
 	v->x_step = TILE_SIZE;
 	v->y_step = TILE_SIZE * tan(angl);
 	v->dda_x = floor(d->data_player.x / TILE_SIZE) * TILE_SIZE;
-	check_side(d, nor_angle(angl));
+	ft_check_side(d, angl);
 	if (d->data_player.west == false)
 	{
 		v->dda_x += TILE_SIZE;
@@ -127,12 +127,12 @@ static void	aux_get_v_inter(t_data *d, double angl, t_dda_data *v)
  * @return The distance from the player to the 
  * nearest vertical intersection.
  */
-double	get_v_inter(t_data *d, double angl)
+double	ft_get_vinter(t_data *d, double angl)
 {
 	t_dda_data	v;
 
-	aux_get_v_inter(d, angl, &v);
-	while (collider_checker(d, v.dda_y, v.dda_x - v.pixel))
+	ft_get_vsteps(d, angl, &v);
+	while (ft_check_coll(d, v.dda_y, v.dda_x - v.pixel))
 	{
 		v.dda_x += v.x_step;
 		v.dda_y += v.y_step;

@@ -12,6 +12,25 @@
 
 #include "cub3d.h"
 
+/**
+ * Normalizes an angle to ensure that it is always in the range 0 to 2π 
+ * radians.
+ * If the angle is negative, 2π is added to bring it within the range.
+ * If the angle is greater than 2π, 2π is subtracted to bring it within 
+ * the range.
+ *
+ * @param angle The angle to be normalized, in radians.
+ * @return The normalized angle, in the range [0, 2π) radians.
+ */
+double	ft_nor_angle(double angle)
+{
+	if (angle < 0)
+		angle += (2 * M_PI);
+	if (angle > (2 * M_PI))
+		angle -= (2 * M_PI);
+	return (angle);
+}
+
 //libera el mapa
 void	ft_free_map(t_map *map)
 {

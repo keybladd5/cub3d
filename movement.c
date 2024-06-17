@@ -77,7 +77,7 @@ void	ft_movement_hook(t_data	*d)
 	ft_hook(d);
 	d->data_player.angle_rotation += (d->data_player.turn_on \
 	* d->data_player.speed_turn_on);
-	d->data_player.angle_rotation = nor_angle(d->data_player.angle_rotation);
+	d->data_player.angle_rotation = ft_nor_angle(d->data_player.angle_rotation);
 	ft_move_player(d);
 	if (d->data_player.advance != 0)
 		d->data_player.advance = 0;
@@ -111,9 +111,9 @@ void	ft_move_player(t_data *d)
 	cos(tmp_angle_rotation) * d->data_player.speed_advance));
 	new_y = roundf(d->data_player.y + (d->data_player.advance * \
 	sin(tmp_angle_rotation) * d->data_player.speed_advance));
-	if (collider_checker(d, new_y, new_x) \
-	&& (collider_checker(d, new_y, d->data_player.x) \
-	&& collider_checker(d, d->data_player.y, new_x)))
+	if (ft_check_coll(d, new_y, new_x) \
+	&& (ft_check_coll(d, new_y, d->data_player.x) \
+	&& ft_check_coll(d, d->data_player.y, new_x)))
 	{
 		d->data_player.x = new_x;
 		d->data_player.y = new_y;
