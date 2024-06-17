@@ -23,10 +23,13 @@ void	ft_esc(void *param)
 
 	d = param;
 	ft_free_map(&d->map);
-	mlx_delete_image(d->mlx, d->image);
+	if (d->image)
+		mlx_delete_image(d->mlx, d->image);
+	if (d->n_image)
+		mlx_delete_image(d->mlx, d->n_image);
 	mlx_close_window(d->mlx);
 	mlx_terminate(d->mlx);
-	exit(0);
+	exit(1);
 }
 
 /**

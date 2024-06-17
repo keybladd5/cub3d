@@ -1,4 +1,44 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ade-tole <ade-tole@student.42barcelon      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/16 20:02:57 by ade-tole          #+#    #+#             */
+/*   Updated: 2024/06/16 20:02:59 by ade-tole         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "cub3d.h"
+
+int	ft_parse_error(int type)
+{
+	ft_putstr_fd("Error\n", 2);
+	if (type == ERROR_ARG)
+		ft_putstr_fd("Wrong argument. Format should be ./cub3d file.cub\n", 2);
+	else if (type == ERROR_OPEN)
+		ft_putstr_fd("Unable to open specified scene file\n", 2);
+	else if (type == ERROR_TEX_BG)
+		ft_putstr_fd("Missing texture/background data\n", 2);
+	else if (type == ERROR_NL)
+		ft_putstr_fd("Empty line found in map\n", 2);
+	else if (type == ERROR_CHAR)
+		ft_putstr_fd("Unexpected character found in map\n", 2);
+	else if (type == ERROR_SPAWN)
+		ft_putstr_fd("Multiple spawn points found in map\n", 2);
+	else if (type == ERROR_NO_SPAWN)
+		ft_putstr_fd("No player spawn point found in map\n", 2);
+	else if (type == ERROR_MAP_SURROUND)
+		ft_putstr_fd("Map not fully enclosed\n", 2);
+	else if (type == ERROR_DATA)
+		ft_putstr_fd("Unexpeced data found in scene file\n", 2);
+	else if (type == ERROR_DUP_DATA)
+		ft_putstr_fd("Duplicate scene data found\n", 2);
+	else if (type == ERROR_RGBA)
+		ft_putstr_fd("Wrong color format must be R,G,B in range[0,255]\n", 2);
+	return (1);
+}
 
 int	ft_wrong_file(char *scene)
 {
@@ -10,150 +50,75 @@ int	ft_wrong_file(char *scene)
 	return (1);
 }
 
-int	ft_parse_input(int argc, char **argv, t_map *map)
+void	init_data_map(t_data *d)
 {
-	ft_bzero(map, sizeof(t_map));
+	int	i;
+	int	j;
 
-	//Verify correct file type passed as argument
-	if (argc != 2 || ft_wrong_file(argv[1]))
-		return (ft_putstr_fd("Error\nWrong argument. Correct format is ./cub3d scene_file.cub\n", 2), 1);
-	//Open and start reading scene file
-	int scenefd = open(argv[1], O_RDONLY);
-	if (scenefd == -1)
-		return (ft_putstr_fd("Error\nUnable to open specified scene file\n", 2), 1);
-	//GNL loop until all data has been found
-	int	data_count = 0;
-	char    *line = get_next_line(scenefd);
-	while (line && data_count < 6 && line[0] != '1' && line[0] != '0') //if a line begins with 0 or 1 means it's the map (always last element)
-	{
-		if (line[0] != '\n')
-		{
-			if (ft_load_mapdata(map, line))
-				return (ft_free_map(map), free(line), 1);
-			data_count++;
-		}
-		free(line);
-		line = get_next_line(scenefd);
-	}
-	//Verify all necessary data was found
-	if (!map->tex.no || !map->tex.so || !map->tex.we || !map->tex.ea || !map->f_color || !map->c_color)
-		return (ft_putstr_fd("Error\nMissing texture/background data\n", 2), free(line), ft_free_map(map), 1);
-	//GNL loop to read map
-	//skip empty lines
-	while(line && (line[0] == '\n'))
-	{
-		free(line);
-		line = get_next_line(scenefd);
-	}
-	
-	//append map rows to map_str
-	char	*map_str = ft_strdup("");
-	while(line)
-	{
-		if (line[0] == '\n')
-			return (ft_putstr_fd("Error\nEmpty line found in map\n", 2), free(map_str), free(line), ft_free_map(map), 1);
-		if (line[0] != '1' && line[0] != '0' && line[0] != ' ' )
-			return (ft_putstr_fd("Error\nUnexpected character found in map\n", 2), free(map_str), free(line), ft_free_map(map), 1);
-		map_str = ft_strjoin_free(map_str, line);
-		line = get_next_line(scenefd);
-	}
-	//check for unexpcted chars in map and only one player spawn (N S W E)
-	int i = 0;
-	while (map_str[i])
-	{
-		if (map_str[i] == 'N' || map_str[i] == 'S' || map_str[i] == 'W' || map_str[i] == 'E')
-		{
-			if (map->spawn)
-				return (ft_putstr_fd("Error\nMultiple spawn points found in map\n", 2), free(map_str), ft_free_map(map), 1);
-			else
-				map->spawn = map_str[i];
-		}
-		else if (map_str[i] != '1' && map_str[i] != '0' && map_str[i] != ' ' && map_str[i] != '\n')
-			return (ft_putstr_fd("Error\nUnexpected character found in map\n", 2), free(map_str), ft_free_map(map), 1);
-		i++;
-	}
-	if (!map->spawn)
-		return (ft_putstr_fd("Error\nNo player spawn point found in map\n", 2), free(map_str), ft_free_map(map), 1);
-	//split map and store in struct, then check it's closed by walls and fill the gaps
-	map->map = ft_split(map_str, '\n');
-	if (!map->map)
-		return (free(map_str), 1);
-	free(map_str);
-	
-	//check first row only contains 1s
-	i = 0;
-	while (map->map[0][i])
-	{
-		if (map->map[0][i] != '1' && map->map[0][i] != ' ')
-			return (ft_putstr_fd("Error\nMap not fully enclosed\n", 2), ft_free_map(map), 1);
-		i++;
-	}
-	//count rows and store number to check last row only contains 1s
-	int map_rows = 0;
-	while (map->map[map_rows])
-		map_rows++;
-	i = 0;
-	while (map->map[map_rows - 1][i])
-	{
-		if (map->map[map_rows - 1][i] != '1' && map->map[0][i] != ' ')
-			return (ft_putstr_fd("Error\nMap not fully enclosed\n", 2), ft_free_map(map), 1);
-		i++;
-	}
-	//check all other rows
-	i = 1;
-	int j = 0;
-	while (i < map_rows - 1)
-	{
-		j = 0;
-		while (map->map[i][j])
-		{
-			if (map->map[i][j] == '0' || map->map[i][j] == map->spawn)
-			{
-				if ((!map->map[i][j - 1] || map->map[i][j - 1] == ' ') || \
-				(!map->map[i][j + 1] || map->map[i][j + 1] == ' ') || \
-				(j >= (int)ft_strlen(map->map[i - 1]) || map->map[i - 1][j] == ' ') \
-				|| (j >= (int)ft_strlen(map->map[i + 1]) || map->map[i + 1][j] == ' '))
-					return (ft_putstr_fd("Error\nMap not fully enclosed\n", 2), ft_free_map(map), 1);
-			}
-			if (map->map[i][j] == map->spawn)
-			{
-				map->spawn_y = i;
-				map->spawn_x = j;
-			}
-			j++;
-		}
-		i++;
-	}
-	//get longest row length and store the value. Any row shorter than that must be expanded to that length, filling it with 1s
 	i = 0;
 	j = 0;
-	map->size_x = 0;
-	while (map->map[i])
+	d->map.size_x = 0;
+	while (d->map.map[i])
 	{
 		j = 0;
-		while (map->map[i][j])
+		while (d->map.map[i][j])
 		{
 			j++;
-			if (j > map->size_x)
-				map->size_x = j;
+			if (j > d->map.size_x)
+				d->map.size_x = j;
 		}
 		i++;
 	}
-	map->size_y = i;
+	d->map.size_y = i;
+	if ((WIDTH * 0.25 / d->map.size_x) < (HEIGHT * 0.25 / d->map.size_y))
+		d->minimap.tile_size = WIDTH * 0.25 / d->map.size_x;
+	else
+		d->minimap.tile_size = HEIGHT * 0.25 / d->map.size_y;
+}
 
+void	init_data_player(t_data *d)
+{
+	d->data_player.advance = 0;
+	d->data_player.turn_on = 0;
+	if (d->map.spawn == 'E')
+		d->data_player.angle_rotation = 0.0;
+	else if (d->map.spawn == 'S')
+		d->data_player.angle_rotation = M_PI / 2;
+	else if (d->map.spawn == 'W')
+		d->data_player.angle_rotation = M_PI;
+	else if (d->map.spawn == 'N')
+		d->data_player.angle_rotation = 3 * M_PI / 2;
+	d->data_player.speed_advance = 4.0;
+	d->data_player.speed_turn_on = 3.5 * (M_PI / 180.0);
+	d->data_player.x = d->map.spawn_x * TILE_SIZE + (TILE_SIZE >> 1);
+	d->data_player.y = d->map.spawn_y * TILE_SIZE + (TILE_SIZE >> 1);
+	d->data_player.fov_radians = (FOV * M_PI) / 180;
+	d->data_player.lateral_move = 0;
+	d->data_player.west = false;
+	d->data_player.south = false;
+}
 
-	
-	//debug
-	int	k = 0;
-	while (map->map[k])
-	{
-		printf("%s\n", map->map[k]);
-		k++;
-	}
-	printf("%d\n", map->size_x);
-	printf("%d\n", map->size_y);
-	printf("%d\n", map->spawn_x);
-	printf("%d\n", map->spawn_y);
+/*
+1) Verify correct file type passed as argument
+2) Open and start reading scene file
+3) Call ft_parse_mapdata to get all necessary info
+4) Call ft_parse_map to check map errors and store it in a 2D array
+*/
+int	ft_parse_input(int argc, char **argv, t_map *map)
+{
+	int		scenefd;
+	char	*line;
 
+	if (argc != 2 || ft_wrong_file(argv[1]))
+		return (ft_parse_error(ERROR_ARG));
+	scenefd = open(argv[1], O_RDONLY);
+	if (scenefd == -1)
+		return (ft_parse_error(ERROR_OPEN));
+	ft_bzero(map, sizeof(t_map));
+	line = get_next_line(scenefd);
+	if (ft_parse_mapdata(&line, scenefd, map))
+		return (ft_free_map(map), free(line), 1);
+	if (ft_parse_map(&line, scenefd, map))
+		return (ft_free_map(map), 1);
 	return (0);
 }
