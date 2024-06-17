@@ -174,14 +174,14 @@ char			*ft_skip_spaces(char *str);
 
 int				ft_read_texture(t_map *map, char *line);
 
-int	ft_parse_mapdata(char **line, int scenefd, t_map *map);
+int				ft_parse_mapdata(char **line, int scenefd, t_map *map);
 
-int	ft_parse_map(char **line, int scenefd, t_map *map);
+int				ft_parse_map(char **line, int scenefd, t_map *map);
 
-void	init_data_map(t_data *d);
+void			init_data_map(t_data *d);
 
-void	init_data_player(t_data *d);
+void			init_data_player(t_data *d);
 
-int	ft_parse_error(int type);
+int				ft_parse_error(int type);
 
 #endif
