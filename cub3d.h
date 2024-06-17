@@ -37,6 +37,8 @@
 # define ERROR_DATA			13
 # define ERROR_DUP_DATA		14
 # define ERROR_RGBA			15
+# define HORIZONTAL			16
+# define VERTICAL			17
 
 
 
@@ -68,7 +70,7 @@ typedef struct s_minimap
 
 typedef struct s_rays
 {
-	int		flag;//if horizontal collision is the lower 1, else 0
+	int		collission;//if horizontal collision is the lower 1, else 0
 	int		index;//index of rays
 	double	wall_hit_x_horizontal;
 	double	wall_hit_y_horizontal;
@@ -124,7 +126,7 @@ int				get_rgba(int r, int g, int b, int a);
 
 int				collider_checker(t_data *d, double x, double y);
 
-void			ft_cast_rays(t_data *d);
+void			ft_render_scene(t_data *d);
 
 double			nor_angle(double angle);
 
@@ -134,7 +136,7 @@ int				color_walls(t_data *d, int flag);
 
 mlx_texture_t	*get_texture_walls(t_data *d, int flag);
 
-void			render_scene(t_data *d, int ray);
+void			ft_ray_caster(t_data *d, int ray);
 
 void			ft_movement_hook(t_data *d);
 

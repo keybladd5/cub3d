@@ -92,10 +92,10 @@ void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double wall_h)
 	mlx_texture_t	*tex;
 	double			factor;
 
-	tex = get_texture_walls(d, d->cast_rays.flag);
+	tex = get_texture_walls(d, d->cast_rays.collission);
 	d->map.tex.arr = (unsigned int *)tex->pixels;
 	factor = (double)tex->height / wall_h;
-	if (d->cast_rays.flag == 1)
+	if (d->cast_rays.collission == HORIZONTAL)
 		x_o = (t_32)fmodf((d->cast_rays.wall_hit_x_horizontal \
 		* (tex->width / TILE_SIZE)), tex->width);
 	else

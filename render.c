@@ -93,7 +93,7 @@ void	check_side(t_data *d, double angle)
  * scene and player information.
  * @param ray Index of the current ray being rendered.
  */
-void	render_scene(t_data *d, int ray)
+void	ft_ray_caster(t_data *d, int ray)
 {
 	double	wall_h;
 	double	bottom_pix;
@@ -123,30 +123,31 @@ void	render_scene(t_data *d, int ray)
  * @param d Pointer to the main data structure containing 
  * scene and player information.
  */
-void	ft_cast_rays(t_data *d)
+void	ft_render_scene(t_data *d)
 {
-	double	x_collision;
-	double	y_collision;
+	double	h_collision;
+	double	v_collision;
 	int		ray;
 
-	ray = 0;
+	ray = -1;
 	d->cast_rays.ray_ngl = \
 	d->data_player.angle_rotation - (d->data_player.fov_radians * 0.5);
 	d->cast_rays.ray_ngl = nor_angle(d->cast_rays.ray_ngl);
-	while (ray < WIDTH)
+	while (++ray < WIDTH)
 	{
-		d->cast_rays.flag = 0;
-		x_collision = get_h_inter(d, nor_angle(d->cast_rays.ray_ngl));
-		y_collision = get_v_inter(d, nor_angle(d->cast_rays.ray_ngl));
-		if (y_collision <= x_collision)
-			d->cast_rays.distance = y_collision;
+		h_collision = get_h_inter(d, nor_angle(d->cast_rays.ray_ngl));
+		v_collision = get_v_inter(d, nor_angle(d->cast_rays.ray_ngl));
+		if (v_collision <= h_collision)
+		{
+			d->cast_rays.distance = v_collision;
+			d->cast_rays.collission = VERTICAL;
+		}
 		else
 		{
-			d->cast_rays.distance = x_collision;
-			d->cast_rays.flag = 1;
+			d->cast_rays.distance = h_collision;
+			d->cast_rays.collission = HORIZONTAL;
 		}
-		render_scene(d, ray);
-		ray++;
+		ft_ray_caster(d, ray);
 		d->cast_rays.ray_ngl += (d->data_player.fov_radians / WIDTH);
 	}
 }

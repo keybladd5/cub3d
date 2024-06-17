@@ -25,9 +25,9 @@
  * texture to select (0 for east/west, 1 for south/north).
  * @return Pointer to the selected texture.
  */
-mlx_texture_t	*get_texture_walls(t_data *d, int flag)
+mlx_texture_t	*get_texture_walls(t_data *d, int collission)
 {
-	if (flag == 0)
+	if (collission == VERTICAL)
 	{
 		if (d->data_player.west == true)
 			return (d->map.tex.we);
@@ -53,6 +53,8 @@ mlx_texture_t	*ft_load_texture(char *line)
 	ft_search_replace(line, '\n', '\0');
 	p_tex = mlx_load_png(line);
 	if (!p_tex)
+		return (ft_putstr_fd("Error\nUnable to open texture asset\n", 2), NULL);
+	if (p_tex->height != 64 || p_tex->width != 64)
 		return (ft_putstr_fd("Error\nUnable to open texture asset\n", 2), NULL);
 	return (p_tex);
 }
@@ -85,3 +87,4 @@ int	ft_read_texture(t_map *map, char *line)
 	}
 	return (0);
 }
+

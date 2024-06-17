@@ -29,7 +29,7 @@ void	ft_game_loop(void *param)
 	if (!d->n_image)
 		ft_mlx_error();
 	ft_movement_hook(d);
-	ft_cast_rays(d);
+	ft_render_scene(d);
 	ft_draw_minimap(d, 0, 0);
 	mlx_delete_image(d->mlx, d->image);
 	d->image = d->n_image;
@@ -67,7 +67,7 @@ int	main(int argc, char **argv)
 	//parte a sustituir con la version del ales 
 	d.mlx = mlx_init(WIDTH, HEIGHT, "cub3d", true);
 	d.n_image = mlx_new_image(d.mlx, WIDTH, HEIGHT);
-	ft_cast_rays(&d);
+	ft_render_scene(&d);
 	ft_draw_minimap(&d, 0, 0);
 	d.image = d.n_image;
 	mlx_image_to_window(d.mlx, d.image, 0, 0);
