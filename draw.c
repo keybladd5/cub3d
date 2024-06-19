@@ -31,22 +31,21 @@ int	get_rgba(int r, int g, int b, int a)
 
 /**
  * Reverses the bytes of a 32-bit integer.
- * Takes an integer and swaps its bytes to convert between 
- * little-endian and big-endian formats.
+ * Takes an integer and swaps its bytes to convert RGBA format
  *
  * @param c The 32-bit integer whose bytes are to be reversed.
  * @return The 32-bit integer with its bytes reversed.
  */
-int	reverse_bytes(int c)
+int	ft_torgba(int c)
 {
-	unsigned int	b;
+	unsigned int	pix;
 
-	b = 0;
-	b |= (c & 0xFF) << 24;
-	b |= (c & 0xFF00) << 8;
-	b |= (c & 0xFF0000) >> 8;
-	b |= (c & 0xFF000000) >> 24;
-	return (b);
+	pix = 0;
+	pix |= (c & 0xFF) << 24;
+	pix |= (c & 0xFF00) << 8;
+	pix |= (c & 0xFF0000) >> 8;
+	pix |= (c & 0xFF000000) >> 24;
+	return (pix);
 }
 
 /**
@@ -85,18 +84,19 @@ void	safe_pixel_put(mlx_image_t *image, int x, int y, int color)
  * @param bottom_pix Bottom pixel index where the wall ends on the screen.
  * @param height_wall Height of the wall on the screen.
  */
-void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double height_wall)
+void	ft_draw_texture(t_data *d, int top_pix, int bottom_pix, \
+double height_wall)
 {
-	double			x_o;
-	double			y_o;
 	mlx_texture_t	*tex;
 	double			factor;
+	double			x_o;
+	double			y_o;
 
 	tex = get_texture_walls(d, d->cast_rays.collission);
 	d->map.tex.arr = (unsigned int *)tex->pixels;
 	factor = ((double)tex->height / height_wall);
 	if (d->cast_rays.collission == HORIZONTAL)
-		x_o = (t_32)fmodf(d->cast_rays.wall_hit_x_horizontal, tex->width);
+		x_o = (t_32)fmodf(d->cast_rays.wall_hit_x_horizontal, TILE_SIZE);
 	else
 		x_o = (t_32)fmodf(d->cast_rays.wall_hit_y_vertical, tex->width);
 	y_o = (top_pix - (HEIGHT >> 1) + (height_wall * 0.5)) * factor;
@@ -104,9 +104,9 @@ void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double height_wal
 		y_o = 0;
 	while (top_pix < bottom_pix)
 	{
-		if ((t_32)y_o < tex->height && (t_32)x_o < tex->width)
+		if ((t_32)y_o < TILE_SIZE && (t_32)x_o < TILE_SIZE)
 			safe_pixel_put(d->n_image, d->cast_rays.index, top_pix, \
-			reverse_bytes(d->map.tex.arr[(t_32)y_o * tex->width + (t_32)x_o]));
+			ft_torgba(d->map.tex.arr[(t_32)y_o * TILE_SIZE + (t_32)x_o]));
 		y_o += factor;
 		top_pix++;
 	}
@@ -125,7 +125,7 @@ void	draw_wall_texture(t_data *d, int top_pix, int bottom_pix, double height_wal
  * @param t_pix Top pixel index for rendering the ceiling.
  * @param b_pix Bottom pixel index for rendering the floor.
  */
-void	draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix)
+void	ft_draw_fl_ce(t_data *d, int ray, int t_pix, int b_pix)
 {
 	int		i;
 

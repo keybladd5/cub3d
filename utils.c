@@ -31,7 +31,21 @@ double	ft_nor_angle(double angle)
 	return (angle);
 }
 
-//libera el mapa
+/**
+ * @brief Deallocates memory associated with the map structure.
+ *
+ * This function frees the memory allocated for a map (`map`) 
+ * structure. It performs
+ * the following tasks:
+ *
+ * - Frees textures associated with north, south, west, 
+ *   and east walls (if allocated).
+ * - Frees each individual row within the map array 
+ *   (`map->map`) using `free`.
+ * - Frees the entire map array itself using `free`.
+ *
+ * @param map Pointer to the map structure to be freed.
+ */
 void	ft_free_map(t_map *map)
 {
 	int	i;
@@ -56,6 +70,18 @@ void	ft_free_map(t_map *map)
 	}
 }
 
+/**
+ * @brief In-place search and replace in a string.
+ *
+ * This function modifies the provided string (`str`) 
+ * by replacing all occurrences
+ * of the character `og` with the character `new`. It performs an in-place
+ * modification, directly changing the contents of the `str` array.
+ *
+ * @param str String to be modified.
+ * @param og Character to be replaced.
+ * @param new Character to replace with.
+ */
 void	ft_search_replace(char *str, char og, char new)
 {
 	int	len;
@@ -68,6 +94,12 @@ void	ft_search_replace(char *str, char og, char new)
 	}
 }
 
+/**
+ * @brief Skips leading whitespace (excluding newline).
+ *
+ * @param str String to skip leading whitespace from.
+ * @return Pointer to first non-whitespace character.
+ */
 char	*ft_skip_spaces(char *str)
 {
 	while (ft_isspace(*str) && *str != '\n')

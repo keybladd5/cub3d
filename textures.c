@@ -43,6 +43,19 @@ mlx_texture_t	*get_texture_walls(t_data *d, int collission)
 	}
 }
 
+/**
+ * @brief Loads a texture file and performs basic validation.
+ *
+ * Skips leading whitespace, removes trailing newline, 
+ * loads the texture using * `mlx_load_png`, and checks for 
+ * successful loading and dimensions (64x64).
+ * Returns the texture pointer on success, 
+ * or NULL with error message on failure.
+ *
+ * @param line String containing the path to the texture file.
+ *
+ * @return Pointer to the loaded texture (mlx_texture_t) or NULL on error.
+ */
 mlx_texture_t	*ft_load_texture(char *line)
 {
 	mlx_texture_t	*p_tex;
@@ -54,11 +67,23 @@ mlx_texture_t	*ft_load_texture(char *line)
 	p_tex = mlx_load_png(line);
 	if (!p_tex)
 		return (ft_putstr_fd("Error\nUnable to open texture asset\n", 2), NULL);
-	//if (p_tex->height != 64 || p_tex->width != 64)
-		//return (ft_putstr_fd("Error\nTextures must be 64x64 pixel\n", 2), NULL);
+	if (p_tex->height != 64 || p_tex->width != 64)
+		return (ft_putstr_fd("Error\nTextures must be 64x64 pixel\n", 2), NULL);
 	return (p_tex);
 }
 
+/**
+ * @brief Assigns loaded texture based on identifier (NO, SO, WE, EA)
+ *
+ * Reads texture identifier (first 2 characters) and assigns loaded texture
+ * from `ft_load_texture` to corresponding member in `map->tex`. 
+ * Returns 1 on error, * 0 on success.
+ *
+ * @param map Pointer to the map structure.
+ * @param line String containing texture identifier and path.
+ *
+ * @return 0 on success, 1 on error (loading or invalid identifier).
+ */
 int	ft_read_texture(t_map *map, char *line)
 {
 	if (!ft_strncmp(line, "NO", 2))

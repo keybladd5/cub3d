@@ -12,6 +12,14 @@
 
 #include "cub3d.h"
 
+/**
+ * @brief Validates RGB color format (3 digits, 2 commas).
+ *
+ * Checks if string follows format "R,G,B" where R,G,B are digits (0-255).
+ * Returns 0 on valid format, 1 on error.
+ * @param line String containing the RGB color data.
+ * @return 0 (valid), 1 (invalid).
+ */
 int	ft_check_rgb(char *line)
 {
 	int	i;
@@ -35,7 +43,14 @@ int	ft_check_rgb(char *line)
 	return (0);
 }
 
-// load background colors
+/**
+ * @brief Parses RGB, sets map color (F/C), validates (0-255).
+ *
+ * @param map Pointer to the map structure.
+ * @param line String containing color data.
+ * @param c_or_f Character indicating floor ('F') or ceiling ('C').
+ * @return 0 on success, 1 on error.
+ */
 int	ft_load_bg(t_map *map, char *line, char c_or_f)
 {
 	char	**rgb;
@@ -63,6 +78,12 @@ int	ft_load_bg(t_map *map, char *line, char c_or_f)
 	return (free(rgb[0]), free(rgb[1]), free(rgb[2]), free(rgb), 0);
 }
 
+/**
+ * @brief Checks for duplicate map data (texture or color).
+ * @param map Pointer to the map structure.
+ * @param line String containing potential duplicate data.
+ * @return 1 if duplicate found, 0 otherwise.
+ */
 int	ft_check_dupdata(t_map *map, char *line)
 {
 	if ((!ft_strncmp(line, "NO", 2) && map->tex.no) || \
@@ -75,6 +96,16 @@ int	ft_check_dupdata(t_map *map, char *line)
 	return (0);
 }
 
+/**
+ * @brief Parses map data (textures, colors).
+ * Skips spaces, checks dups, classifies data (tex: read path, F/C load bg).
+ * Returns 0 (success), 1 (error).
+ *
+ * @param map Pointer to the map structure.
+ * @param line String containing a line of map data.
+ *
+ * @return 0 on success, 1 on error.
+ */
 int	ft_load_mapdata(t_map *map, char *line)
 {
 	char	c_or_f;
@@ -99,8 +130,19 @@ int	ft_load_mapdata(t_map *map, char *line)
 	return (0);
 }
 
-// GNL loop until all data has been found or start of the map, 
-//then verify all data is present and skip empty lines
+/**
+ * @brief Reads and validates map data (textures, colors) until map start.
+ *
+ * With GNL Loops until map data or start is found, 
+ * checks for duplicates/errors while processing each line (skips empty lines).
+ *  Validates presence of all textures and colors.
+ *
+ * @param line Double pointer to the current line (updated during loop).
+ * @param scenefd File descriptor of the scene file.
+ * @param map Pointer to the map structure.
+ *
+ * @return 0 on success, 1 on error.
+ */
 int	ft_parse_mapdata(char **line, int scenefd, t_map *map)
 {
 	int		data_count;

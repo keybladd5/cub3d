@@ -26,18 +26,18 @@
  */
 int	ft_check_coll(t_data *d, double y, double x)
 {
-	int		x_m;
-	int		y_m;
+	int		x_map;
+	int		y_map;
 
 	if (x < 0.0 || y < 0.0)
 		return (0);
-	x_m = floor(x / TILE_SIZE);
-	y_m = floor(y / TILE_SIZE);
-	if (y_m >= d->map.size_y || x_m >= d->map.size_x)
+	x_map = floor(x / TILE_SIZE);
+	y_map = floor(y / TILE_SIZE);
+	if (y_map >= d->map.size_y || x_map >= d->map.size_x)
 		return (0);
-	if (d->map.map[y_m] && x_m <= (int)ft_strlen(d->map.map[y_m]))
+	if (d->map.map[y_map] && x_map <= (int)ft_strlen(d->map.map[y_map]))
 	{
-		if (d->map.map[y_m][x_m] == '1')
+		if (d->map.map[y_map][x_map] == '1')
 			return (0);
 		return (1);
 	}
@@ -65,7 +65,7 @@ void	ft_check_side(t_data *d, double angle)
 		d->data_player.west = false;
 }
 
-/**
+/** 
  * Renders the walls on the screen correcting fisheye distortion.
  * Calculates the height of the wall and the start and end pixels
  * to draw on the screen, then calls the functions that draw the wall,
@@ -74,19 +74,48 @@ void	ft_check_side(t_data *d, double angle)
  * @param d Pointer to the main data structure containing 
  * scene and player information.
  * @param ray Index of the current ray being rendered.
+ * @param plane_dist (internal variable) Distance from the player to the
+ * projection plane, defined as the adjacent side of the
+ * triangle with an angle of fov / 2 and an opposite side of
+ * WIDTH / 2. Using the tangent formula (tan = opposite / adjacent)
+ * we isolate the adjacent side to obtain the value. The variable
+ * is constant as it only depends on the FOV and the WIDTH.
+ * @param height_wall contains the projected height of the wall 
+ * in pixels, which will be used to draw the wall slice on the screen.
+ * 
+ *Thales' Theorem: Two right triangles that have the same angle, 
+  with legs (CA1, CO1) and (CA2, CO2), always maintain the same 
+  ratio between their legs, so that CO1/CA1 = CO2/CA2.
+  In our case:
+
+    CA1 = plane_dist (distance from the player to 
+	the projection plane, in pixels)
+    CO1 = height_wall / 2 (half the height of the wall, in pixels)
+    CA2 = d->cast_rays.distance (distance from the player to the wall, 
+	in our unit of measure (1 tile = 64))
+    CO2 = TILE_SIZE / 2 (half the height of the wall, 
+	in our unit of measure (64 / 2))
+
+  The formula would be: height_wall/2 / plane_dist = 
+  TILE_SIZE/2 / d->cast_rays.distance
+
+  Solving for height_wall (the value to calculate): 
+  height_wall = 2 * plane_dist * (TILE_SIZE/2 / d->cast_rays.distance)
+ * 
  */
 void	ft_ray_caster(t_data *d, int ray)
 {
 	double	height_wall;
 	double	bottom_pix;
 	double	top_pix;
+	int		plane_dist;
 
 	d->cast_rays.distance *= cos(ft_nor_angle \
 	(d->cast_rays.ray_ngl - d->data_player.angle_rotation));
 	if (!d->cast_rays.distance)
 		d->cast_rays.distance = 1;
-	height_wall = (TILE_SIZE / d->cast_rays.distance) * \
-	((WIDTH >> 1) / tan(d->data_player.fov_radians * 0.5)); // punto clave
+	plane_dist = ((WIDTH >> 1) / tan(d->data_player.fov_radians * 0.5));
+	height_wall = 2 * plane_dist * ((TILE_SIZE >> 1) / d->cast_rays.distance);
 	bottom_pix = (HEIGHT >> 1) + (height_wall * 0.5);
 	top_pix = (HEIGHT >> 1) - (height_wall * 0.5);
 	if (bottom_pix > HEIGHT)
@@ -94,8 +123,8 @@ void	ft_ray_caster(t_data *d, int ray)
 	if (top_pix < 0)
 		top_pix = 0;
 	d->cast_rays.index = ray;
-	draw_wall_texture(d, top_pix, bottom_pix, height_wall);
-	draw_floor_ceiling(d, ray, top_pix, bottom_pix);
+	ft_draw_texture(d, top_pix, bottom_pix, height_wall);
+	ft_draw_fl_ce(d, ray, top_pix, bottom_pix);
 }
 
 /**
@@ -109,8 +138,8 @@ void	ft_ray_caster(t_data *d, int ray)
  */
 void	ft_render_scene(t_data *d)
 {
-	double	h_collision;
-	double	v_collision;
+	double	h_dist;
+	double	v_dist;
 	int		ray;
 
 	ray = -1;
@@ -119,19 +148,19 @@ void	ft_render_scene(t_data *d)
 	while (++ray < WIDTH)
 	{
 		d->cast_rays.ray_ngl = ft_nor_angle(d->cast_rays.ray_ngl);
-		h_collision = ft_get_hinter(d, d->cast_rays.ray_ngl);
-		v_collision = ft_get_vinter(d, d->cast_rays.ray_ngl);
-		if (v_collision <= h_collision)
+		h_dist = ft_get_hinter(d, d->cast_rays.ray_ngl);
+		v_dist = ft_get_vinter(d, d->cast_rays.ray_ngl);
+		if (v_dist <= h_dist)
 		{
-			d->cast_rays.distance = v_collision;
+			d->cast_rays.distance = v_dist;
 			d->cast_rays.collission = VERTICAL;
 		}
 		else
 		{
-			d->cast_rays.distance = h_collision;
+			d->cast_rays.distance = h_dist;
 			d->cast_rays.collission = HORIZONTAL;
 		}
 		ft_ray_caster(d, ray);
-		d->cast_rays.ray_ngl += (d->data_player.fov_radians / WIDTH); //punto clave a repasar
+		d->cast_rays.ray_ngl += (d->data_player.fov_radians / WIDTH);
 	}
 }

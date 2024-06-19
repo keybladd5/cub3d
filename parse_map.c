@@ -12,7 +12,12 @@
 
 #include "cub3d.h"
 
-// Verify no unexpected chars are found in the map & there is only one spawn
+/**
+ * @brief Validates map characters and ensures single spawn point.
+ * @param map_str Map string
+ * @param map Map structure
+ * @return 0 on success, error code otherwise
+ */
 int	ft_check_mapchars(char *map_str, t_map *map)
 {
 	int	i;
@@ -38,6 +43,13 @@ int	ft_check_mapchars(char *map_str, t_map *map)
 	return (0);
 }
 
+/**
+ * @brief Checks if a tile is open (not surrounded by walls).
+ * @param map Map structure
+ * @param i X-coord
+ * @param j Y-coord
+ * @return 1 if open, 0 otherwise
+ */
 int	ft_tile_notclosed(t_map *map, int i, int j)
 {
 	if ((!map->map[i][j - 1] || map->map[i][j - 1] == ' ') || \
@@ -48,9 +60,15 @@ int	ft_tile_notclosed(t_map *map, int i, int j)
 	return (0);
 }
 
-// Loops every map row from 1 to n-1. For every '0' checks all surrounding 
-// tiles are '0' or '1' (no openings). For the spawn point does the same and 
-// stores its position.
+/**
+ * @brief Loops every map row from 1 to n-1. For every '0' checks 
+ * all surrounding tiles are '0' or '1' (no openings). 
+ * For the spawn point does the same and 
+ * stores its position.
+ * @param map_rows Number of map rows
+ * @param map Map structure
+ * @return 0 on success, error code otherwise
+ */
 int	ft_check_rowsclosed(int map_rows, t_map *map)
 {
 	int	i;
