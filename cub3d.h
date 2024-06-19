@@ -39,6 +39,7 @@
 # define ERROR_RGBA			15
 # define HORIZONTAL			16
 # define VERTICAL			17
+# define OFFSET_TILE		24
 
 typedef uint32_t	t_32;
 
@@ -76,7 +77,7 @@ typedef struct s_rays
 	double	wall_hit_x_vertical;
 	double	wall_hit_y_vertical;	
 	double	ray_ngl;//angle of ray
-	double	distance;//beteen 2 impacts x and y
+	double	distance;// our unit of measurement (1 tile = 64 pixels)
 }	t_rays;
 
 typedef struct s_textures
@@ -121,8 +122,6 @@ typedef struct s_data
 	t_map			map;
 }	t_data;
 
-/*****<MAIN>*****/
-
 int				get_rgba(int r, int g, int b, int a);
 
 int				ft_check_coll(t_data *d, double x, double y);
@@ -131,7 +130,7 @@ void			ft_render_scene(t_data *d);
 
 double			ft_nor_angle(double angle);
 
-void			draw_floor_ceiling(t_data *d, int ray, int t_pix, int b_pix);
+void			ft_draw_fl_ce(t_data *d, int ray, int t_pix, int b_pix);
 
 int				color_walls(t_data *d, int flag);
 
@@ -153,10 +152,10 @@ double			ft_get_vinter(t_data *d, double angl);
 
 void			ft_check_side(t_data *d, double angle);
 
-void			draw_wall_texture(t_data *d, int t_pix, int b_pix, \
+void			ft_draw_texture(t_data *d, int t_pix, int b_pix, \
 double wall_h);
 
-int				reverse_bytes(int c);
+int				ft_torgba(int c);
 
 void			ft_draw_minimap(t_data *d, int y, int x);
 
