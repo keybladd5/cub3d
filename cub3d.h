@@ -124,7 +124,7 @@ typedef struct s_data
 
 int				get_rgba(int r, int g, int b, int a);
 
-int				ft_check_coll(t_data *d, double x, double y);
+int				ft_check_coll(t_data *d, double y, double x);
 
 void			ft_render_scene(t_data *d);
 
