@@ -59,11 +59,9 @@ mlx_texture_t	*get_texture_walls(t_data *d, int collission)
 mlx_texture_t	*ft_load_texture(char *line)
 {
 	mlx_texture_t	*p_tex;
-
+	
 	line += 2;
-	while (ft_isspace(*line) && *line != '\n')
-		line++;
-	ft_search_replace(line, '\n', '\0');
+	line = ft_skip_spaces(line);
 	p_tex = mlx_load_png(line);
 	if (!p_tex)
 		return (ft_putstr_fd("Error\nUnable to open texture asset\n", 2), NULL);

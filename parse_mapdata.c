@@ -51,13 +51,14 @@ int	ft_check_rgb(char *line)
  * @param c_or_f Character indicating floor ('F') or ceiling ('C').
  * @return 0 on success, 1 on error.
  */
-int	ft_load_bg(t_map *map, char *line, char c_or_f)
+int	ft_read_bg(t_map *map, char *line, char c_or_f)
 {
 	char	**rgb;
 	int		i;
 	int		rgb_arr[3];
 
-	ft_search_replace(line, '\n', '\0');
+	line++;
+	line = ft_skip_spaces(line);
 	if (ft_check_rgb(line))
 		return (1);
 	rgb = ft_split(line, ',');
@@ -110,24 +111,27 @@ int	ft_load_mapdata(t_map *map, char *line)
 {
 	char	c_or_f;
 
-	line = ft_skip_spaces(line);
+	ft_search_replace(line, '\n', '\0');
+	line = ft_strtrim(line, " \t\v\f\r");
+	if (!line)
+		return (1);
 	if (ft_check_dupdata(map, line))
 		return (ft_parse_error(ERROR_DUP_DATA));
 	if (!ft_strncmp(line, "NO", 2) || !ft_strncmp(line, "SO", 2) \
 	|| !ft_strncmp(line, "WE", 2) || !ft_strncmp(line, "EA", 2))
 	{
 		if (ft_read_texture(map, line))
-			return (1);
+			return (free(line), 1);
 	}
 	else if (!ft_strncmp(line, "F", 1) || !ft_strncmp(line, "C", 1))
 	{
 		c_or_f = *line;
-		if (ft_load_bg(map, ft_skip_spaces(++line), c_or_f))
-			return (ft_parse_error(ERROR_RGBA));
+		if (ft_read_bg(map, line, c_or_f))
+			return (free(line), ft_parse_error(ERROR_RGBA));
 	}
 	else
-		return (ft_parse_error(ERROR_DATA));
-	return (0);
+		return (free(line), ft_parse_error(ERROR_DATA));
+	return (free(line), 0);
 }
 
 /**
