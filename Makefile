@@ -14,7 +14,7 @@ NAME	=	cub3d
 
 CC		=	gcc
 
-L_FLAGS =	-Wall -Wextra -Werror -MMD -g  #-fsanitize=address
+L_FLAGS =	-Wall -Wextra -Werror -MMD -g  -fsanitize=address
 
 SRC	=	main.c draw.c render.c movement.c minimap.c dda_collission.c utils.c parse.c parse_mapdata.c parse_map.c \
 		textures.c
