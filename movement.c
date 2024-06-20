@@ -117,9 +117,9 @@ int	ft_check_volumencoll(t_data *d, int new_x, int new_y)
 	&& ft_check_coll(d, new_y + OFFSET_TILE, new_x + OFFSET_TILE) \
 	&& ft_check_coll(d, new_y + OFFSET_TILE, new_x - OFFSET_TILE)))
 		no_collission = 0;
-	if (!(ft_check_coll(d, new_y, d->data_player.x) \
+	/*if (!(ft_check_coll(d, new_y, d->data_player.x) \
 	&& ft_check_coll(d, d->data_player.y, new_x)))
-		no_collission = 0;
+		no_collission = 0;*/
 	return (no_collission);
 }
 
@@ -145,9 +145,24 @@ void	ft_move_player(t_data *d)
 	cos(tmp_angle_rotation) * d->data_player.speed_advance));
 	new_y = roundf(d->data_player.y + (d->data_player.advance * \
 	sin(tmp_angle_rotation) * d->data_player.speed_advance));
-	if (ft_check_volumencoll(d, new_x, new_y))
+	
+	int	y_dir;
+	int	x_dir;
+	ft_check_side(d, tmp_angle_rotation);
+	y_dir = d->data_player.advance;
+	if (!d->data_player.south)
+		y_dir *= -1;
+	x_dir = d->data_player.advance;
+	if (d->data_player.west)
+		x_dir *= -1;
+	if (ft_check_coll(d, new_y + (y_dir * OFFSET_TILE), new_x) && ft_check_coll(d, new_y, new_x + (x_dir * OFFSET_TILE)) && ft_check_coll(d, new_y + (y_dir * OFFSET_TILE), new_x + (x_dir * OFFSET_TILE)))
 	{
 		d->data_player.x = new_x;
 		d->data_player.y = new_y;
 	}
+	else if (ft_check_coll(d, new_y + (y_dir * OFFSET_TILE), d->data_player.x) && ft_check_coll(d, new_y, d->data_player.x + (x_dir * OFFSET_TILE)))
+		d->data_player.y = new_y;
+	else if (ft_check_coll(d, d->data_player.y + (y_dir * OFFSET_TILE), new_x) && ft_check_coll(d, d->data_player.y, new_x + (x_dir * OFFSET_TILE)))
+		d->data_player.x = new_x;
+	ft_check_side(d, d->data_player.angle_rotation);
 }
