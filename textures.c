@@ -29,17 +29,17 @@ mlx_texture_t	*get_texture_walls(t_data *d, int collission)
 {
 	if (collission == VERTICAL)
 	{
-		if (d->data_player.west == true)
-			return (d->map.tex.we);
-		else
+		if (d->data_player.west)
 			return (d->map.tex.ea);
+		else
+			return (d->map.tex.we);
 	}
 	else
 	{
-		if (d->data_player.south == true)
-			return (d->map.tex.so);
-		else
+		if (d->data_player.south)
 			return (d->map.tex.no);
+		else
+			return (d->map.tex.so);
 	}
 }
 
@@ -59,7 +59,7 @@ mlx_texture_t	*get_texture_walls(t_data *d, int collission)
 mlx_texture_t	*ft_load_texture(char *line)
 {
 	mlx_texture_t	*p_tex;
-	
+
 	line += 2;
 	line = ft_skip_spaces(line);
 	p_tex = mlx_load_png(line);

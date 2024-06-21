@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   map.c                                              :+:      :+:    :+:   */
+/*   parse_map.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ade-tole <ade-tole@student.42barcelon      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -118,7 +118,8 @@ int	ft_check_mapclosed(t_map *map)
 	i = 0;
 	while (map->map[map_rows - 1][i])
 	{
-		if (map->map[map_rows - 1][i] != '1' && map->map[0][i] != ' ')
+		if (map->map[map_rows - 1][i] != '1' \
+		&& map->map[map_rows - 1][i] != ' ')
 			return (ft_parse_error(ERROR_MAP_SURROUND));
 		i++;
 	}

@@ -78,6 +78,9 @@ fclean	:	clean
 
 re		:	fclean all
 
+normi :
+		@norminette cub3d.h dda_collission.c draw.c main.c minimap.c movement.c parse_map.c parse_mapdata.c parse.c render.c textures.c utils.c
+
 -include $(DEPS)
 
-.PHONY: all clean fclean re makelib
+.PHONY: all clean fclean re makelib normi
