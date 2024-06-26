@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-NAME	=	cub3d
+NAME	=	cub3D
 
 CC		=	gcc
 
@@ -54,7 +54,8 @@ $(NAME)	:	MLX42/build/libmlx42.a $(OBJ)
 
 makelib	:
 		@echo "${BLUE}Compiling MLX42...${NC}"
-		make -C MLX42/build -j4
+		@(cd MLX42 >/dev/null && cmake -B build  >/dev/null && cmake --build build -j4 >/dev/null)
+		@make -C MLX42/build -j4
 		@echo "${GREEN}MLX42 Compiled${NC}"
 		@echo "${BLUE}Compiling Libft...${NC}"
 		@$(MAKE) -j -C libft/ & pid=$$!; \

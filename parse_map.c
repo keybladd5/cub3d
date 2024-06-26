@@ -139,11 +139,15 @@ int	ft_parse_map(char **line, int scenefd, t_map *map)
 	char	*map_str;
 
 	map_str = ft_strdup("");
+	if(!map_str)
+		exit(1);
 	while (*line)
 	{
 		if (*line[0] == '\n')
 			return (free(map_str), free(*line), ft_parse_error(ERROR_NL));
 		map_str = ft_strjoin_free(map_str, *line);
+		if(!map_str)
+			exit(1);
 		*line = get_next_line(scenefd);
 	}
 	if (ft_check_mapchars(map_str, map))
